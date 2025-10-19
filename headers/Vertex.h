@@ -8,15 +8,17 @@ class Vertex
 {
 
 private:
+    int id;
     int x;
     int y;
     vector<int> neighbors;
 
 public:
     Vertex();
-    Vertex(int a, int b, vector<int> neighborIds);
+    Vertex(int id, int a, int b, vector<int> neighborIds);
     void setX(int val);
     void setY(int val);
+    int getId() const;
     int getX() const;
     int getY() const;
     void addNeighbor(int vertexId);
@@ -25,7 +27,7 @@ public:
 
 Vertex::Vertex() {}
 
-Vertex::Vertex(int a, int b, vector<int> neighborIds) : x(a), y(b), neighbors(neighborIds) {}
+Vertex::Vertex(int pointId, int a, int b, vector<int> neighborIds) : id(pointId), x(a), y(b), neighbors(neighborIds) {}
 
 void Vertex::setX(int val)
 {
@@ -35,6 +37,11 @@ void Vertex::setX(int val)
 void Vertex::setY(int val)
 {
     y = val;
+}
+
+int Vertex::getId() const
+{
+    return id;
 }
 
 int Vertex::getX() const

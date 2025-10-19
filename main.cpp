@@ -17,10 +17,10 @@ int main()
     Grid grid = Grid();
     grid = makeGrid(grid);
 
-    Vertex startPoint = grid.getPoint(10);
-    Agent agent = Agent(10, startPoint.getX(), startPoint.getY());
+    // Vertex startPoint = grid.getPoint(10);
+    // Agent agent = Agent(10, startPoint.getX(), startPoint.getY());
 
-    Simulation simulation = Simulation(grid, agent);
+    Simulation simulation = Simulation(grid, 5);
 
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);

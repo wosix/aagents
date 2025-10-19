@@ -13,6 +13,7 @@
 class Agent
 {
 private:
+    Vertex startingPoint;
     int locationId;
     int x;
     int y;
@@ -35,6 +36,7 @@ public:
     int getPathLength();
     bool move(int x, int y);
     void draw();
+    void reset();
     ~Agent();
 };
 
@@ -147,6 +149,12 @@ bool Agent::move(int targetX, int targetY)
     pathLength += speed / 100.0f;
 
     return (x == targetX && y == targetY);
+}
+
+void Agent::reset() {
+    visited = {};
+    setLocationId(startingPoint.getId());
+    setLocation(startingPoint.getX(), startingPoint.getY());
 }
 
 void Agent::draw()

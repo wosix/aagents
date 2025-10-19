@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <set>
 #include <Vertex.h>
 #include <raylib.h>
 #include <rcamera.h>
@@ -26,22 +27,8 @@ public:
     Vertex getPoint(int id);
     void addPoint(int x, int y);
     void connectPoints(int id1, int id2);
-    void draw(vector<int> visited);
+    void draw(set<int> visited);
 
-    void print()
-    {
-        for (const auto &[id, vertex] : points)
-        {
-            std::cout << "Point " << id << " at (" << vertex.getX() << ", " << vertex.getY() << ") connected to: ";
-
-            vector<int> neighbors = vertex.getNeighbors();
-            for (int neighbor : neighbors)
-            {
-                std::cout << neighbor << " ";
-            }
-            std::cout << std::endl;
-        }
-    }
 };
 
 unordered_map<int, Vertex> Grid::getPoints()
@@ -77,7 +64,7 @@ Vertex Grid::getPoint(int id)
 void Grid::addPoint(int x, int y)
 {
     int pointId = getSize();
-    points[pointId] = Vertex(x, y, {});
+    points[pointId] = Vertex(pointId, x, y, {});
 }
 
 void Grid::connectPoints(int id1, int id2)
@@ -87,11 +74,11 @@ void Grid::connectPoints(int id1, int id2)
     connections.insert({id1, id2});
 }
 
-bool isVisited(const std::vector<int> &visited, int node)
+bool isVisited(const set<int> &visited, int node)
 {
     return find(visited.begin(), visited.end(), node) != visited.end();
 }
-void Grid::draw(vector<int> visited)
+void Grid::draw(set<int> visited)
 {
     for (const auto &[id, point] : points)
     {
@@ -136,6 +123,10 @@ Grid makeGrid(Grid grid)
     grid.addPoint(900, 700);
     grid.addPoint(1100, 700);
 
+    grid.addPoint(200, 500);
+    grid.addPoint(300, 500);
+
+
     grid.connectPoints(0, 1);
     grid.connectPoints(1, 2);
     grid.connectPoints(1, 5);
@@ -154,6 +145,10 @@ Grid makeGrid(Grid grid)
     grid.connectPoints(12, 8);
     grid.connectPoints(12, 17);
     grid.connectPoints(16, 17);
+    grid.connectPoints(18, 9);
+    grid.connectPoints(18, 19);
+    grid.connectPoints(13, 18);
+    grid.connectPoints(5, 19);
 
     return grid;
 }
