@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <raylib.h>
-#include <rcamera.h>
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -19,6 +18,7 @@ private:
     int y;
     vector<int> visited;
     float pathLength;
+    int targetId;
 
 public:
     Agent();
@@ -34,6 +34,11 @@ public:
     bool hasVisitedAllPoints(vector<int> ids);
     vector<int> findUnvisited(vector<int> neighbors);
     int getPathLength();
+    
+    int getTargetId();
+    void setTargetId(int id);
+    bool hasTarget();
+
     bool move(int x, int y);
     void draw();
     void reset();
@@ -45,6 +50,7 @@ Agent::Agent()
 }
 Agent::Agent(int id, int a, int b) : locationId(id), x(a), y(b)
 {
+    targetId = -1;
     pathLength = 0;
     visited = {};
     addVisited(id);
@@ -58,6 +64,11 @@ void Agent::setX(int val)
 void Agent::setY(int val)
 {
     y = val;
+}
+
+void Agent::setTargetId(int id)
+{
+    targetId = id;
 }
 
 void Agent::setLocation(int x, int y)
@@ -96,10 +107,10 @@ bool Agent::hasVisitedAllNeighbors(vector<int> neighbors)
     {
         if (find(visited.begin(), visited.end(), neighborId) == visited.end())
         {
-            return false; // znaleziono przynajmniej jeden brakujący
+            return false;
         }
     }
-    return true; // wszystkie elementy z vec1 są w vec2
+    return true;
 }
 
 bool Agent::hasVisitedAllPoints(vector<int> pointsIds)
@@ -108,10 +119,10 @@ bool Agent::hasVisitedAllPoints(vector<int> pointsIds)
     {
         if (find(visited.begin(), visited.end(), id) == visited.end())
         {
-            return false; // znaleziono przynajmniej jeden brakujący
+            return false;
         }
     }
-    return true; // wszystkie elementy z vec1 są w vec2
+    return true;
 }
 
 vector<int> Agent::findUnvisited(vector<int> neighbors)
@@ -121,14 +132,22 @@ vector<int> Agent::findUnvisited(vector<int> neighbors)
     {
         if (find(visited.begin(), visited.end(), neighborId) == visited.end())
         {
-            unvisited.push_back(neighborId); // zwraca pierwszy napotkany brakujący
+            unvisited.push_back(neighborId);
         }
     }
-    return unvisited; // zwraca -1 gdy nie ma brakujących
+    return unvisited;
 }
 
 int Agent::getPathLength() {
     return pathLength;
+}
+
+int Agent::getTargetId(){
+    return targetId;
+}
+
+bool Agent::hasTarget(){
+    return targetId < 0;
 }
 
 bool Agent::move(int targetX, int targetY)
@@ -152,7 +171,8 @@ bool Agent::move(int targetX, int targetY)
 }
 
 void Agent::reset() {
-    visited = {};
+    visited.clear();
+    targetId = -1;
     setLocationId(startingPoint.getId());
     setLocation(startingPoint.getX(), startingPoint.getY());
 }
