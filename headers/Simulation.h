@@ -1,3 +1,4 @@
+#pragma once
 #include <raylib.h>
 #include <set>
 #include <cstring>
@@ -9,17 +10,23 @@ class Simulation
 private:
     Grid grid;
     vector<Agent> agents;
-    int iter = 1;
+    int iteration = 1;
 
 public:
     Simulation();
     Simulation(Grid grid, int agentCount);
-    void update();
-    bool hasAgentsVisitedAllPoints();
-    void goToRandomPointA(int id);
-    void goToUnvisitedPointA(int id);
+    virtual void update() = 0;
+
+    Vertex getPoint(int pointId);
+    vector<int> getGridPointsIds();
     set<int> getVisitedTogether();
 
+    int getAgentSize();
+    vector<Agent> getAgents();
+    Agent &getAgent(int agentId);
+
+    int getIteration();
+    void addIteration();
 
     void reset();
     void draw();
@@ -34,98 +41,19 @@ Simulation::Simulation(Grid grid, int agentCount) : grid(grid)
         int randomIndex = GetRandomValue(0, grid.getSize() - 1);
         Vertex startPoint = grid.getPoint(randomIndex);
 
-        Agent agent = Agent(randomIndex, startPoint.getX(), startPoint.getY());
+        Agent agent = Agent(startPoint);
         agents.push_back(agent);
     }
 }
 
-void Simulation::update()
+Vertex Simulation::getPoint(int pointId)
 {
-
-    if (hasAgentsVisitedAllPoints())
-    {
-        int ag = 1;
-        char text[32] = "";
-        printf("\n");
-        printf("%d:", iter);
-        for (Agent agent : agents)
-        {
-            printf("\ni%d: %d", ag, static_cast<int>(agent.getPathLength()));
-            ag++;
-
-            agent.reset();
-        }
-        printf("\n");
-        iter++;
-        // reset();
-        WaitTime(1);
-    }
-
-    for (int i = 0; i < agents.size(); i++)
-    {
-
-        Agent agent = agents[i];
-
-        if (agent.hasTarget())
-        {
-            goToRandomPointA(i);
-            return;
-        }
-
-        Vertex currentTarget = grid.getPoint(agent.getTargetId());
-
-        if (agents[i].move(currentTarget.getX(), currentTarget.getY()))
-        {
-            agents[i].setLocationId(agent.getTargetId());
-
-            if (agents[i].hasVisitedAllNeighbors(currentTarget.getNeighbors()))
-            {
-                goToRandomPointA(i);
-            }
-            else
-            {
-                goToUnvisitedPointA(i);
-            }
-        }
-    }
+    return grid.getPoint(pointId);
 }
 
-bool Simulation::hasAgentsVisitedAllPoints()
+vector<int> Simulation::getGridPointsIds()
 {
-    set<int> visitedTogether = getVisitedTogether();
-    for (int pointId : grid.getPointIds())
-    {
-        if (find(visitedTogether.begin(), visitedTogether.end(), pointId) == visitedTogether.end())
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-void Simulation::goToRandomPointA(int id)
-{
-    int currentLocation = agents[id].getLocationId();
-    Vertex currentVertex = grid.getPoint(currentLocation);
-
-    vector<int> neighbors = currentVertex.getNeighbors();
-    int randomIndex = GetRandomValue(0, neighbors.size() - 1);
-    int nextTarget = neighbors[randomIndex];
-
-    agents[id].setTargetId(nextTarget);
-}
-
-void Simulation::goToUnvisitedPointA(int id)
-{
-    int currentLocation = agents[id].getLocationId();
-    Vertex currentVertex = grid.getPoint(currentLocation);
-
-    vector<int> neighbors = currentVertex.getNeighbors();
-    vector<int> unvisited = agents[id].findUnvisited(neighbors);
-    int randomIndex = GetRandomValue(0, unvisited.size() - 1);
-    int nextTarget = unvisited[randomIndex];
-
-    agents[id].setTargetId(nextTarget);
+    return grid.getPointIds();
 }
 
 set<int> Simulation::getVisitedTogether()
@@ -141,12 +69,38 @@ set<int> Simulation::getVisitedTogether()
     return visitedTogether;
 }
 
+int Simulation::getAgentSize()
+{
+    return agents.size();
+}
+
+vector<Agent> Simulation::getAgents()
+{
+    return agents;
+}
+
+Agent &Simulation::getAgent(int agentId)
+{
+    return agents[agentId];
+}
+
+int Simulation::getIteration()
+{
+    return iteration;
+}
+
+void Simulation::addIteration()
+{
+    iteration++;
+}
+
 void Simulation::reset()
 {
     for (int i = 0; i < agents.size(); i++)
     {
         agents[i].reset();
     }
+    addIteration();
 }
 
 void Simulation::draw()
