@@ -7,7 +7,6 @@
 
 class SimulationUnvisited : public Simulation
 {
-
 public:
     using Simulation::Simulation;
 
@@ -16,15 +15,12 @@ public:
     bool hasAgentsVisitedAllPoints();
     void goToRandomPoint(Agent &agent);
     void goToUnvisitedPoint(Agent &agent);
-
 };
 
 void SimulationUnvisited::update()
 {
-
     if (hasAgentsVisitedAllPoints())
     {
-        printf("koniec");
         int ag = 1;
         char text[32] = "";
         printf("\n");
@@ -33,8 +29,6 @@ void SimulationUnvisited::update()
         {
             printf("\ni%d: %d", ag, static_cast<int>(agent.getPathLength()));
             ag++;
-
-            // agent.reset();
         }
         printf("\n");
 
@@ -58,7 +52,7 @@ void SimulationUnvisited::update()
 
         if (agent.move(currentTarget.getX(), currentTarget.getY()))
         {
-            agent.setLocationId(agent.getTargetId());
+            agent.setCurrentPoint(currentTarget);
 
             if (agent.hasVisitedAllNeighbors(currentTarget.getNeighbors()))
             {
@@ -87,8 +81,7 @@ bool SimulationUnvisited::hasAgentsVisitedAllPoints()
 
 void SimulationUnvisited::goToRandomPoint(Agent &agent)
 {
-    int currentLocation = agent.getLocationId();
-    Vertex currentVertex = getPoint(currentLocation);
+    Vertex currentVertex = agent.getCurrentPoint();
     vector<int> neighbors = currentVertex.getNeighbors();
     int randomIndex = GetRandomValue(0, neighbors.size() - 1);
     int nextTarget = neighbors[randomIndex];
@@ -97,13 +90,10 @@ void SimulationUnvisited::goToRandomPoint(Agent &agent)
 
 void SimulationUnvisited::goToUnvisitedPoint(Agent &agent)
 {
-    int currentLocation = agent.getLocationId();
-    Vertex currentVertex = getPoint(currentLocation);
-
+    Vertex currentVertex = agent.getCurrentPoint();
     vector<int> neighbors = currentVertex.getNeighbors();
     vector<int> unvisited = agent.findUnvisited(neighbors);
     int randomIndex = GetRandomValue(0, unvisited.size() - 1);
     int nextTarget = unvisited[randomIndex];
-
     agent.setTargetId(nextTarget);
 }

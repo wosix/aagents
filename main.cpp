@@ -17,8 +17,8 @@ int main()
     Grid grid = Grid();
     grid = makeGrid(grid);
 
-    // SimulationRandom simulation = SimulationRandom(grid, 1);
-    SimulationUnvisited simulation = SimulationUnvisited(grid, 1);
+    // SimulationRandom simulation = SimulationRandom(grid, 4);
+    SimulationUnvisited simulation = SimulationUnvisited(grid, 5);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
     SetTargetFPS(60);

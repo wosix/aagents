@@ -5,15 +5,16 @@
 #include <algorithm>
 #include <string>
 #include <cstring>
+#include <cmath>
 #include "Vertex.h"
 
-#define AGENT_MOVE_SPEED 120
+#define AGENT_MOVE_SPEED 3
 
 class Agent
 {
 private:
     Vertex startingPoint;
-    int locationId;
+    Vertex currentPoint;
     int x;
     int y;
     vector<int> visited;
@@ -25,20 +26,24 @@ public:
     Agent(Vertex startingPoint);
     void setX(int val);
     void setY(int val);
+
+    void setCurrentPoint(Vertex vertex);
+    Vertex getCurrentPoint();
+
     void setLocation(int x, int y);
-    void setLocationId(int pointId);
-    int getLocationId();
+
     vector<int> getVisited();
     void addVisited(int pointId);
     bool hasVisitedAllNeighbors(vector<int> neighbors);
     bool hasVisitedAllPoints(vector<int> ids);
     vector<int> findUnvisited(vector<int> neighbors);
     int getPathLength();
-    
+
     int getTargetId();
     void setTargetId(int pointId);
     bool hasTarget();
 
+    bool movee(int x, int y, int tx, int ty);
     bool move(int x, int y);
     void draw();
     void reset();
@@ -53,7 +58,7 @@ Agent::Agent(Vertex startingPoint) : startingPoint(startingPoint)
     visited = {};
     setX(startingPoint.getX());
     setY(startingPoint.getY());
-    setLocationId(startingPoint.getId());
+    setCurrentPoint(startingPoint);
     setTargetId(-1);
     pathLength = 0;
 }
@@ -73,21 +78,21 @@ void Agent::setTargetId(int pointId)
     targetId = pointId;
 }
 
+void Agent::setCurrentPoint(Vertex point)
+{
+    currentPoint = point;
+    addVisited(point.getId());
+}
+
+Vertex Agent::getCurrentPoint()
+{
+    return currentPoint;
+}
+
 void Agent::setLocation(int x, int y)
 {
     setX(x);
     setY(y);
-}
-
-void Agent::setLocationId(int pointId)
-{
-    locationId = pointId;
-    addVisited(pointId);
-}
-
-int Agent::getLocationId()
-{
-    return locationId;
 }
 
 vector<int> Agent::getVisited()
@@ -140,15 +145,18 @@ vector<int> Agent::findUnvisited(vector<int> neighbors)
     return unvisited;
 }
 
-int Agent::getPathLength() {
+int Agent::getPathLength()
+{
     return pathLength;
 }
 
-int Agent::getTargetId(){
+int Agent::getTargetId()
+{
     return targetId;
 }
 
-bool Agent::hasTarget(){
+bool Agent::hasTarget()
+{
     return targetId >= 0;
 }
 
@@ -166,17 +174,17 @@ bool Agent::move(int targetX, int targetY)
     else if (y > targetY)
         y = max(y - speed, targetY);
 
-
     pathLength += speed / 100.0f;
 
     return (x == targetX && y == targetY);
 }
 
-void Agent::reset() {
+void Agent::reset()
+{
     visited.clear();
     pathLength = 0;
     targetId = -1;
-    setLocationId(startingPoint.getId());
+    setCurrentPoint(startingPoint);
     setLocation(startingPoint.getX(), startingPoint.getY());
 }
 
@@ -188,7 +196,7 @@ void Agent::draw()
     string length = to_string(static_cast<int>(pathLength));
     strcat(text, length.c_str());
 
-    DrawText(text, 0, 0 , 48, BLACK);
+    DrawText(text, 0, 0, 48, BLACK);
 }
 
 Agent::~Agent()

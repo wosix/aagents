@@ -18,10 +18,8 @@ public:
 
 void SimulationRandom::update()
 {
-
     if (hasAgentsVisitedAllPoints())
     {
-        printf("koniec");
         int ag = 1;
         char text[32] = "";
         printf("\n");
@@ -30,7 +28,6 @@ void SimulationRandom::update()
         {
             printf("\ni%d: %d", ag, static_cast<int>(agent.getPathLength()));
             ag++;
-
         }
         printf("\n");
 
@@ -54,7 +51,7 @@ void SimulationRandom::update()
 
         if (agent.move(currentTarget.getX(), currentTarget.getY()))
         {
-            agent.setLocationId(agent.getTargetId());
+            agent.setCurrentPoint(currentTarget);
 
             goToRandomPoint(agent);
         }
@@ -76,8 +73,7 @@ bool SimulationRandom::hasAgentsVisitedAllPoints()
 
 void SimulationRandom::goToRandomPoint(Agent &agent)
 {
-    int currentLocation = agent.getLocationId();
-    Vertex currentVertex = getPoint(currentLocation);
+    Vertex currentVertex = agent.getCurrentPoint();
     vector<int> neighbors = currentVertex.getNeighbors();
     int randomIndex = GetRandomValue(0, neighbors.size() - 1);
     int nextTarget = neighbors[randomIndex];
