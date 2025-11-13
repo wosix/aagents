@@ -28,7 +28,6 @@ public:
     void addPoint(int x, int y);
     void connectPoints(int id1, int id2);
     void draw(set<int> visited);
-
 };
 
 unordered_map<int, Vertex> Grid::getPoints()
@@ -89,6 +88,10 @@ void Grid::draw(set<int> visited)
         }
 
         DrawCircle(point.getX(), point.getY(), 20, color);
+
+        // draw vertex id
+        string vertexId = to_string(id);
+        DrawText(vertexId.c_str(), point.getX(), point.getY(), 48, BLACK);
     }
 
     for (const auto connection : connections)
@@ -125,7 +128,6 @@ Grid makeGrid(Grid grid)
 
     grid.addPoint(200, 500);
     grid.addPoint(300, 500);
-
 
     grid.connectPoints(0, 1);
     grid.connectPoints(1, 2);
