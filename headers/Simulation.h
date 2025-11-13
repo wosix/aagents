@@ -34,13 +34,24 @@ public:
 
 Simulation::Simulation() {}
 
+set<int> getRandomIds(int gridSize, int agentCount)
+{
+    SetRandomSeed(1);
+    set<int> ids = {};
+    while (ids.size() < agentCount)
+    {
+        int randomNumber = GetRandomValue(0, gridSize - 1);
+        ids.insert(randomNumber);
+    }
+    return ids;
+}
+
 Simulation::Simulation(Grid grid, int agentCount) : grid(grid)
 {
-    for (int i = 0; i < agentCount; i++)
+    set<int> startingIds = getRandomIds(grid.getSize(), agentCount);
+    for (int id : startingIds)
     {
-        int randomIndex = GetRandomValue(0, grid.getSize() - 1);
-        Vertex startPoint = grid.getPoint(randomIndex);
-
+        Vertex startPoint = grid.getPoint(id);
         Agent agent = Agent(startPoint);
         agents.push_back(agent);
     }
