@@ -7,19 +7,22 @@
 
 class Simulation
 {
-private:
-    Grid grid;
+protected:
+    Grid &grid;
     vector<Agent> agents;
     int iteration = 1;
 
 public:
-    Simulation();
-    Simulation(Grid grid, int agentCount);
+    Simulation(Grid &grid, int agentCount);
     virtual void update() = 0;
 
-    Vertex getPoint(int pointId);
+    bool everyAgentHasReachedTarget();
+    // bool everyAgentHasTarget();
+
+    Vertex &getPoint(int pointId);
     vector<int> getGridPointsIds();
     set<int> getVisitedTogether();
+    vector<int> getAvailablePointIds(int pointId);
 
     int getAgentSize();
     vector<Agent> getAgents();
@@ -31,8 +34,6 @@ public:
     void reset();
     void draw();
 };
-
-Simulation::Simulation() {}
 
 set<int> getRandomIds(int gridSize, int agentCount)
 {
@@ -46,20 +47,54 @@ set<int> getRandomIds(int gridSize, int agentCount)
     return ids;
 }
 
-Simulation::Simulation(Grid grid, int agentCount) : grid(grid)
+Simulation::Simulation(Grid &grid, int agentCount) : grid(grid)
 {
-    set<int> startingIds = getRandomIds(grid.getSize(), agentCount);
+    int agentId = 0;
+    // to jest do testow
+    // set<int> startingIds = getRandomIds(grid.getSize(), agentCount);
+    set<int> startingIds = {0, 6};
     for (int id : startingIds)
     {
-        Vertex startPoint = grid.getPoint(id);
-        Agent agent = Agent(startPoint);
+        Vertex &startPoint = grid.getVertex(id);
+        Agent agent = Agent(agentId, startPoint.getId(), grid);
         agents.push_back(agent);
+        agentId++;
     }
 }
 
-Vertex Simulation::getPoint(int pointId)
+bool Simulation::everyAgentHasReachedTarget()
 {
-    return grid.getPoint(pointId);
+    // for (int i = 0; i < agents.size(); i++)
+    // {
+    //     if (!getAgent(i).hasReachedTarget())
+    //     {
+    //         return false;
+    //     }
+    // }
+    // return true;
+
+    printf("Sprawdzam everyAgentHasReachedTarget():\n");
+    for (int i = 0; i < getAgentSize(); i++)
+    {
+        Agent &agent = getAgent(i);
+        bool hasTarget = agent.hasTarget();
+        bool reached = agent.hasReachedTarget();
+        printf("  Agent %d: hasTarget=%d, reachedTarget=%d\n", i, hasTarget, reached);
+
+        // Jeśli agent ma cel ale jeszcze nie dotarł - return false
+        if (hasTarget && !reached)
+        {
+            printf("  -> Agent %d jeszcze nie dotarł do celu!\n", i);
+            return false;
+        }
+    }
+    printf("  -> WSZYSCY DOTARLI DO CELÓW!\n");
+    return true;
+}
+
+Vertex &Simulation::getPoint(int pointId)
+{
+    return grid.getVertex(pointId);
 }
 
 vector<int> Simulation::getGridPointsIds()
@@ -78,6 +113,67 @@ set<int> Simulation::getVisitedTogether()
         }
     }
     return visitedTogether;
+}
+
+vector<int> Simulation::getAvailablePointIds(int pointId)
+{
+    // Vertex currentVertex = grid.getVertex(pointId);
+    // vector<int> neighbors = currentVertex.getNeighbors();
+
+    // vector<int> available;
+    // for (int neighborId : neighbors)
+    // {
+    //     if (!grid.isVertexBusy(neighborId))
+    //     {
+    //         available.push_back(neighborId);
+    //     }
+    // }
+    // return available;
+
+    printf("DEBUG: getAvailablePointIds dla pointId: %d\n", pointId);
+
+    // ✅ DODAJ SPRAWDZENIE CZY VERTEX ISTNIEJE
+    if (!grid.vertexExists(pointId))
+    {
+        printf("KRYTYCZNY BŁĄD: Vertex %d nie istnieje w getAvailablePointIds!\n", pointId);
+        return {}; // zwróć pustą listę
+    }
+
+    Vertex currentVertex = grid.getVertex(pointId);
+    vector<int> neighbors = currentVertex.getNeighbors();
+
+    printf("Sąsiedzi vertex %d: ", pointId);
+    for (int n : neighbors)
+        printf("%d ", n);
+    printf("\n");
+
+    vector<int> available;
+    for (int neighborId : neighbors)
+    {
+        // ✅ SPRAWDŹ CZY SĄSIAD ISTNIEJE
+        if (!grid.vertexExists(neighborId))
+        {
+            printf("BŁĄD: Sąsiad %d nie istnieje!\n", neighborId);
+            continue;
+        }
+
+        if (!grid.isVertexBusy(neighborId))
+        {
+            available.push_back(neighborId);
+            printf("Vertex %d jest dostępny\n", neighborId);
+        }
+        else
+        {
+            printf("Vertex %d jest zajęty\n", neighborId);
+        }
+    }
+
+    printf("Dostępni sąsiedzi: ");
+    for (int a : available)
+        printf("%d ", a);
+    printf("\n");
+
+    return available;
 }
 
 int Simulation::getAgentSize()

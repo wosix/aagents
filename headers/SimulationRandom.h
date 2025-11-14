@@ -12,8 +12,10 @@ public:
 
     void update() override;
 
+    void makeMove(Agent &agent);
+
     bool hasAgentsVisitedAllPoints();
-    void goToRandomPoint(Agent &agent);
+    void setRandomTarget(Agent &agent);
 };
 
 void SimulationRandom::update()
@@ -38,23 +40,22 @@ void SimulationRandom::update()
 
     for (int i = 0; i < getAgentSize(); i++)
     {
-
         Agent &agent = getAgent(i);
+        makeMove(agent);
+    }
+}
 
-        if (!agent.hasTarget())
-        {
-            goToRandomPoint(agent);
-            continue;
-        }
+void SimulationRandom::makeMove(Agent &agent)
+{
+    if (!agent.hasTarget())
+    {
+        setRandomTarget(agent);
+        return;
+    }
 
-        Vertex currentTarget = getPoint(agent.getTargetId());
-
-        if (agent.move(currentTarget.getX(), currentTarget.getY()))
-        {
-            agent.setCurrentPoint(currentTarget);
-
-            goToRandomPoint(agent);
-        }
+    if (agent.moveToTarget())
+    {
+        setRandomTarget(agent);
     }
 }
 
@@ -71,9 +72,9 @@ bool SimulationRandom::hasAgentsVisitedAllPoints()
     return true;
 }
 
-void SimulationRandom::goToRandomPoint(Agent &agent)
+void SimulationRandom::setRandomTarget(Agent &agent)
 {
-    Vertex currentVertex = agent.getCurrentPoint();
+    Vertex currentVertex = grid.getVertex(agent.getCurrentPointId());
     vector<int> neighbors = currentVertex.getNeighbors();
     int randomIndex = GetRandomValue(0, neighbors.size() - 1);
     int nextTarget = neighbors[randomIndex];

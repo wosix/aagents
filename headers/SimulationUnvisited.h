@@ -12,57 +12,107 @@ public:
 
     void update() override;
 
+    void planMove(Agent &agent);
+    void makeMove(Agent &agent);
+
     bool hasAgentsVisitedAllPoints();
-    void goToRandomPoint(Agent &agent);
-    void goToUnvisitedPoint(Agent &agent);
+    void setRandomTarget(Agent &agent);
+    void setUnvisitedTarget(Agent &agent);
 };
 
 void SimulationUnvisited::update()
 {
+
+    printf("=== UPDATE Iteracja: %d ===\n", getIteration());
+
     if (hasAgentsVisitedAllPoints())
     {
-        int ag = 1;
-        char text[32] = "";
-        printf("\n");
-        printf("%d:", getIteration());
-        for (Agent agent : getAgents())
-        {
-            printf("\ni%d: %d", ag, static_cast<int>(agent.getPathLength()));
-            ag++;
-        }
-        printf("\n");
-
-        reset();
-        WaitTime(1);
+        printf("Wszystkie punkty odwiedzone!\n");
+        // ... reszta kodu ...
         return;
     }
 
+    // DEBUG: Stan agentów
+    printf("Stan agentów przed planowaniem:\n");
     for (int i = 0; i < getAgentSize(); i++)
     {
-
         Agent &agent = getAgent(i);
+        printf("Agent %d: target=%d, reachedTarget=%d\n",
+               i, agent.getTargetId(), agent.hasReachedTarget());
+    }
 
-        if (!agent.hasTarget())
+    // FAZA 1: PLANOWANIE - tylko jeśli wszyscy dotarli do celów
+    bool allReached = everyAgentHasReachedTarget();
+    printf("everyAgentHasReachedTarget() = %d\n", allReached);
+
+    if (allReached)
+    {
+        printf("WSZYSCY DOTARLI - PLANUJEMY!\n");
+        for (int i = 0; i < getAgentSize(); i++)
         {
-            goToRandomPoint(agent);
-            return;
+            Agent &agent = getAgent(i);
+            planMove(agent);
+        }
+    }
+
+    // FAZA 2: WYKONANIE
+    printf("WYKONUJEMY RUCH:\n");
+    for (int i = 0; i < getAgentSize(); i++)
+    {
+        Agent &agent = getAgent(i);
+        makeMove(agent);
+        printf("Agent %d po makeMove: target=%d, reached=%d\n",
+               i, agent.getTargetId(), agent.hasReachedTarget());
+    }
+
+    addIteration();
+    printf("=== KONEC UPDATE ===\n\n");
+}
+
+void SimulationUnvisited::planMove(Agent &agent)
+{
+
+    // Tylko jeśli agent nie ma celu LUB dotarł do celu
+    if (!agent.hasTarget() || agent.hasReachedTarget())
+    {
+        Vertex &current = grid.getVertex(agent.getCurrentPointId());
+        vector<int> neighbors = current.getNeighbors();
+
+        // TYLKO WOLNE WIERZCHOŁKI
+        vector<int> available;
+        for (int neighborId : neighbors)
+        {
+            if (!grid.isVertexBusy(neighborId))
+            {
+                available.push_back(neighborId);
+            }
         }
 
-        Vertex currentTarget = getPoint(agent.getTargetId());
-
-        if (agent.move(currentTarget.getX(), currentTarget.getY()))
+        if (!available.empty())
         {
-            agent.setCurrentPoint(currentTarget);
+            int randomIndex = GetRandomValue(0, available.size() - 1);
+            int chosenTarget = available[randomIndex];
 
-            if (agent.hasVisitedAllNeighbors(currentTarget.getNeighbors()))
+            // OD RAZU ZAREZERWUJ (żeby inni nie wybrali tego samego)
+            if (grid.reserveVertex(chosenTarget, agent.getId()))
             {
-                goToRandomPoint(agent);
-            }
-            else
-            {
-                goToUnvisitedPoint(agent);
+                agent.setTargetId(chosenTarget);
             }
         }
+        else
+        {
+            // Brak dostępnych - zostaje bez celu
+            agent.setTargetId(-1);
+            agent.setReachedTarget(true); // "Dotarł" do braku celu
+        }
+    }
+}
+
+void SimulationUnvisited::makeMove(Agent &agent)
+{
+    if (agent.hasTarget() && !agent.hasReachedTarget())
+    {
+        agent.moveToTarget();
     }
 }
 
@@ -79,21 +129,48 @@ bool SimulationUnvisited::hasAgentsVisitedAllPoints()
     return true;
 }
 
-void SimulationUnvisited::goToRandomPoint(Agent &agent)
+void SimulationUnvisited::setRandomTarget(Agent &agent)
 {
-    Vertex currentVertex = agent.getCurrentPoint();
-    vector<int> neighbors = currentVertex.getNeighbors();
-    int randomIndex = GetRandomValue(0, neighbors.size() - 1);
-    int nextTarget = neighbors[randomIndex];
-    agent.setTargetId(nextTarget);
+    // Vertex currentVertex = grid.getVertex(agent.getCurrentPointId());
+    // vector<int> neighbors = currentVertex.getNeighbors();
+
+    vector<int> available = getAvailablePointIds(agent.getCurrentPointId());
+
+    if (!available.empty())
+    {
+        int randomIndex = GetRandomValue(0, available.size() - 1);
+        agent.setTargetId(available[randomIndex]);
+    }
+    else
+    {
+        agent.setTargetId(-1);
+    }
+
+    // int randomIndex = GetRandomValue(0, neighbors.size() - 1);
+    // int nextTarget = neighbors[randomIndex];
+    // agent.setTargetId(nextTarget);
 }
 
-void SimulationUnvisited::goToUnvisitedPoint(Agent &agent)
+void SimulationUnvisited::setUnvisitedTarget(Agent &agent)
 {
-    Vertex currentVertex = agent.getCurrentPoint();
-    vector<int> neighbors = currentVertex.getNeighbors();
-    vector<int> unvisited = agent.findUnvisited(neighbors);
-    int randomIndex = GetRandomValue(0, unvisited.size() - 1);
-    int nextTarget = unvisited[randomIndex];
-    agent.setTargetId(nextTarget);
+    // Vertex currentVertex = grid.getVertex(agent.getCurrentPointId());
+    // vector<int> neighbors = currentVertex.getNeighbors();
+
+    vector<int> available = getAvailablePointIds(agent.getCurrentPointId());
+
+    vector<int> unvisited = agent.findUnvisited(available);
+
+    if (!unvisited.empty())
+    {
+        int randomIndex = GetRandomValue(0, available.size() - 1);
+        agent.setTargetId(unvisited[randomIndex]);
+    }
+    else
+    {
+        agent.setTargetId(-1);
+    }
+
+    // int randomIndex = GetRandomValue(0, unvisited.size() - 1);
+    // int nextTarget = unvisited[randomIndex];
+    // agent.setTargetId(nextTarget);
 }

@@ -8,33 +8,38 @@
 #include <cmath>
 #include "Vertex.h"
 
-#define AGENT_MOVE_SPEED 3
+#define AGENT_MOVE_SPEED 1
 
 class Agent
 {
 private:
-    Vertex startingPoint;
-    Vertex currentPoint;
+    Grid &grid;
+    int id;
+    int startPointId;
+    int currentPointId;
     int x;
     int y;
     vector<int> visited;
     float pathLength;
     int targetId;
+    bool reachedTarget = true;
 
 public:
-    Agent();
-    Agent(Vertex startingPoint);
+    Agent(int agentId, int startPointId, Grid &grid);
+
+    int getId();
+
     void setX(int val);
     void setY(int val);
 
-    void setCurrentPoint(Vertex vertex);
-    Vertex getCurrentPoint();
+    void setCurrentPointId(int pointId);
+    int getCurrentPointId();
 
     void setLocation(int x, int y);
 
     vector<int> getVisited();
     void addVisited(int pointId);
-    bool hasVisitedAllNeighbors(vector<int> neighbors);
+    bool hasVisitedAllNeighbors();
     bool hasVisitedAllPoints(vector<int> ids);
     vector<int> findUnvisited(vector<int> neighbors);
     int getPathLength();
@@ -43,51 +48,51 @@ public:
     void setTargetId(int pointId);
     bool hasTarget();
 
-    bool movee(int x, int y, int tx, int ty);
+    bool hasReachedTarget() const;
+    void setReachedTarget(bool value);
+
+    bool moveToTarget();
+
     bool move(int x, int y);
     void draw();
     void reset();
     ~Agent();
 };
 
-Agent::Agent()
-{
-}
-Agent::Agent(Vertex startingPoint) : startingPoint(startingPoint)
+Agent::Agent(int agentId, int startPointId, Grid &grid) : id(agentId), startPointId(startPointId), grid(grid)
 {
     visited = {};
-    setX(startingPoint.getX());
-    setY(startingPoint.getY());
-    setCurrentPoint(startingPoint);
+    Vertex &startVertex = grid.getVertex(startPointId);
+    setX(startVertex.getX());
+    setY(startVertex.getY());
+    setCurrentPointId(startPointId);
     setTargetId(-1);
+    grid.reserveVertex(startVertex.getId(), agentId);
     pathLength = 0;
 }
 
-void Agent::setX(int val)
-{
-    x = val;
-}
-
-void Agent::setY(int val)
-{
-    y = val;
-}
+int Agent::getId() { return id; }
+void Agent::setX(int val) { x = val; }
+void Agent::setY(int val) { y = val; }
 
 void Agent::setTargetId(int pointId)
 {
     targetId = pointId;
+    reachedTarget = false;
 }
 
-void Agent::setCurrentPoint(Vertex point)
+void Agent::setCurrentPointId(int pointId)
 {
-    currentPoint = point;
-    addVisited(point.getId());
+    if (!grid.vertexExists(pointId))
+    {
+        printf("Agent %d: nie można ustawić currentPointId na nieistniejący vertex %d\n", id, pointId);
+        return;
+    }
+    currentPointId = pointId;
+    addVisited(pointId);
 }
 
-Vertex Agent::getCurrentPoint()
-{
-    return currentPoint;
-}
+int Agent::getCurrentPointId() { return currentPointId; }
 
 void Agent::setLocation(int x, int y)
 {
@@ -95,10 +100,7 @@ void Agent::setLocation(int x, int y)
     setY(y);
 }
 
-vector<int> Agent::getVisited()
-{
-    return visited;
-}
+vector<int> Agent::getVisited() { return visited; }
 
 void Agent::addVisited(int pointId)
 {
@@ -108,8 +110,9 @@ void Agent::addVisited(int pointId)
     }
 }
 
-bool Agent::hasVisitedAllNeighbors(vector<int> neighbors)
+bool Agent::hasVisitedAllNeighbors()
 {
+    vector<int> neighbors = grid.getVertex(currentPointId).getNeighbors();
     for (int neighborId : neighbors)
     {
         if (find(visited.begin(), visited.end(), neighborId) == visited.end())
@@ -145,19 +148,44 @@ vector<int> Agent::findUnvisited(vector<int> neighbors)
     return unvisited;
 }
 
-int Agent::getPathLength()
-{
-    return pathLength;
-}
+int Agent::getPathLength() { return pathLength; }
+int Agent::getTargetId() { return targetId; }
+bool Agent::hasTarget() { return targetId > -1; }
+bool Agent::hasReachedTarget() const { return reachedTarget; }
+void Agent::setReachedTarget(bool value) { reachedTarget = value; }
 
-int Agent::getTargetId()
+bool Agent::moveToTarget()
 {
-    return targetId;
-}
 
-bool Agent::hasTarget()
-{
-    return targetId >= 0;
+    if (!hasTarget() || reachedTarget)
+        return false;
+
+    Vertex &target = grid.getVertex(targetId);
+    bool reached = move(target.getX(), target.getY());
+
+    if (reached)
+    {
+        // Dotarł do celu - zajmij wierzchołek
+        grid.freeVertex(currentPointId);
+        grid.reserveVertex(targetId, id);
+        setCurrentPointId(targetId);
+        reachedTarget = true; // Oznacz że dotarł
+    }
+
+    return reached;
+
+    // Vertex &target = grid.getVertex(targetId);
+    // if (move(target.getX(), target.getY()))
+    // {
+    //     target.free();
+    //     setCurrentPointId(targetId);
+    //     setTargetId(-1);
+    //     return true;
+    // }
+    // else
+    // {
+    //     return false;
+    // }
 }
 
 bool Agent::move(int targetX, int targetY)
@@ -184,8 +212,9 @@ void Agent::reset()
     visited.clear();
     pathLength = 0;
     targetId = -1;
-    setCurrentPoint(startingPoint);
-    setLocation(startingPoint.getX(), startingPoint.getY());
+    setCurrentPointId(startPointId);
+    Vertex startPoint = grid.getVertex(startPointId);
+    setLocation(startPoint.getX(), startPoint.getY());
 }
 
 void Agent::draw()

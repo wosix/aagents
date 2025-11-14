@@ -6,12 +6,12 @@ using namespace std;
 
 class Vertex
 {
-
 private:
     int id;
     int x;
     int y;
     vector<int> neighbors;
+    int busyByAgentId = -1;
 
 public:
     Vertex();
@@ -23,6 +23,10 @@ public:
     int getY() const;
     void addNeighbor(int vertexId);
     vector<int> getNeighbors() const;
+    int getBusyByAgentId();
+    void setBusyByAgentId(int agentId);
+    bool isBusy();
+    void free();
 };
 
 Vertex::Vertex() {}
@@ -62,4 +66,24 @@ void Vertex::addNeighbor(int vertexId)
 vector<int> Vertex::getNeighbors() const
 {
     return neighbors;
+}
+
+int Vertex::getBusyByAgentId()
+{
+    return busyByAgentId;
+}
+
+void Vertex::setBusyByAgentId(int agentId)
+{
+    busyByAgentId = agentId;
+}
+
+bool Vertex::isBusy()
+{
+    return busyByAgentId > -1;
+}
+
+void Vertex::free()
+{
+    busyByAgentId = -1;
 }
