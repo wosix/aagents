@@ -23,9 +23,10 @@ private:
     float pathLength;
     int targetId;
     bool reachedTarget = true;
+    Color color;
 
 public:
-    Agent(int agentId, int startPointId, Grid &grid);
+    Agent(int agentId, int startPointId, Grid &grid, Color color);
 
     int getId();
 
@@ -59,7 +60,7 @@ public:
     ~Agent();
 };
 
-Agent::Agent(int agentId, int startPointId, Grid &grid) : id(agentId), startPointId(startPointId), grid(grid)
+Agent::Agent(int agentId, int startPointId, Grid &grid, Color agentColor) : id(agentId), startPointId(startPointId), grid(grid), color(agentColor)
 {
     visited = {};
     Vertex &startVertex = grid.getVertex(startPointId);
@@ -219,7 +220,7 @@ void Agent::reset()
 
 void Agent::draw()
 {
-    DrawCircle(x, y, 15, ORANGE);
+    DrawCircle(x, y, 15, color);
 
     char text[32] = "NIEZLY AGENT: ";
     string length = to_string(static_cast<int>(pathLength));

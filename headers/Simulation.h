@@ -1,9 +1,20 @@
 #pragma once
 #include <raylib.h>
 #include <set>
+#include <array>
 #include <cstring>
 #include "Grid.h"
 #include "Agent.h"
+
+const array<Color, 8> DEFAULT_COLORS = {
+    ORANGE,
+    BLUE,
+    PINK,
+    PURPLE,
+    DARKBLUE,
+    MAGENTA,
+    GREEN,
+    DARKPURPLE};
 
 class Simulation
 {
@@ -17,7 +28,6 @@ public:
     virtual void update() = 0;
 
     bool everyAgentHasReachedTarget();
-    // bool everyAgentHasTarget();
 
     Vertex &getPoint(int pointId);
     vector<int> getGridPointsIds();
@@ -51,12 +61,13 @@ Simulation::Simulation(Grid &grid, int agentCount) : grid(grid)
 {
     int agentId = 0;
     // to jest do testow
-    // set<int> startingIds = getRandomIds(grid.getSize(), agentCount);
-    set<int> startingIds = {0, 6};
+    set<int> startingIds = getRandomIds(grid.getSize(), agentCount);
+    // set<int> startingIds = {0, 6};
     for (int id : startingIds)
     {
         Vertex &startPoint = grid.getVertex(id);
-        Agent agent = Agent(agentId, startPoint.getId(), grid);
+        Color color = DEFAULT_COLORS[agentId];
+        Agent agent = Agent(agentId, startPoint.getId(), grid, color);
         agents.push_back(agent);
         agentId++;
     }
