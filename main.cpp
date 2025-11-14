@@ -13,12 +13,13 @@ using namespace std;
 
 int main()
 {
-
+    SetRandomSeed((unsigned int)time(NULL));
     Grid grid = Grid();
     grid = makeGrid(grid);
+    // grid = makeTestGrid(grid);
 
     // SimulationRandom simulation = SimulationRandom(grid, 2);
-    SimulationUnvisited simulation = SimulationUnvisited(grid, 2);
+    SimulationUnvisited simulation = SimulationUnvisited(grid, 3);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
     SetTargetFPS(60);
