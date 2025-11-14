@@ -1,20 +1,10 @@
 #pragma once
 #include <raylib.h>
 #include <set>
-#include <array>
 #include <cstring>
 #include "Grid.h"
 #include "Agent.h"
-
-const array<Color, 8> DEFAULT_COLORS = {
-    ORANGE,
-    BLUE,
-    PINK,
-    PURPLE,
-    DARKBLUE,
-    MAGENTA,
-    GREEN,
-    DARKPURPLE};
+#include "ColorManager.h"
 
 class Simulation
 {

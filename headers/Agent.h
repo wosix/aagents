@@ -7,6 +7,7 @@
 #include <cstring>
 #include <cmath>
 #include "Vertex.h"
+#include "ColorManager.h"
 
 #define AGENT_MOVE_SPEED 1
 
@@ -24,6 +25,7 @@ private:
     int targetId;
     bool reachedTarget = true;
     Color color;
+    Color visitedColor;
 
 public:
     Agent(int agentId, int startPointId, Grid &grid, Color color);
@@ -70,6 +72,7 @@ Agent::Agent(int agentId, int startPointId, Grid &grid, Color agentColor) : id(a
     setTargetId(-1);
     grid.reserveVertex(startVertex.getId(), agentId);
     pathLength = 0;
+    visitedColor = Brighten(color, 1.8);
 }
 
 int Agent::getId() { return id; }
@@ -220,13 +223,19 @@ void Agent::reset()
 
 void Agent::draw()
 {
-    DrawCircle(x, y, 15, color);
-
     char text[32] = "NIEZLY AGENT: ";
     string length = to_string(static_cast<int>(pathLength));
     strcat(text, length.c_str());
 
     DrawText(text, 0, 0, 48, BLACK);
+
+    for (int visitedId : visited)
+    {
+        Vertex vertex = grid.getVertex(visitedId);
+        DrawCircle(vertex.getX(), vertex.getY(), 19, visitedColor);
+    }
+
+    DrawCircle(x, y, 15, color);
 }
 
 Agent::~Agent()
