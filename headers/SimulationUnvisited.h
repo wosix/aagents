@@ -41,6 +41,8 @@ void SimulationUnvisited::update()
                i, agent.getTargetId(), agent.hasReachedTarget());
     }
 
+    exchangeVisitedBetweenNeighbors();
+
     // FAZA 1: PLANOWANIE - tylko jeśli wszyscy dotarli do celów
     bool allReached = everyAgentHasReachedTarget();
     printf("everyAgentHasReachedTarget() = %d\n", allReached);

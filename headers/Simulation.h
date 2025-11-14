@@ -28,6 +28,9 @@ public:
     vector<Agent> getAgents();
     Agent &getAgent(int agentId);
 
+    bool areAgentsNeighbors(Agent &agent1, Agent &agent2);
+    void exchangeVisitedBetweenNeighbors();
+
     int getIteration();
     void addIteration();
 
@@ -190,6 +193,65 @@ vector<Agent> Simulation::getAgents()
 Agent &Simulation::getAgent(int agentId)
 {
     return agents[agentId];
+}
+
+bool Simulation::areAgentsNeighbors(Agent &agent1, Agent &agent2)
+{
+    int agent1Vertex = agent1.getCurrentPointId();
+    int agent2Vertex = agent2.getCurrentPointId();
+
+    // Sprawdź czy agent2 jest sąsiadem agent1
+    Vertex &v1 = grid.getVertex(agent1Vertex);
+    vector<int> neighbors1 = v1.getNeighbors();
+    bool isNeighbor = find(neighbors1.begin(), neighbors1.end(), agent2Vertex) != neighbors1.end();
+
+    if (isNeighbor)
+    {
+        printf("Agent %d (vertex %d) i Agent %d (vertex %d) są sąsiadami\n",
+               agent1.getId(), agent1Vertex, agent2.getId(), agent2Vertex);
+    }
+
+    return isNeighbor;
+}
+
+void Simulation::exchangeVisitedBetweenNeighbors()
+{
+    if (!everyAgentHasReachedTarget())
+    {
+        return;
+    }
+
+    printf("=== WYMIANA VISITED ===\n");
+
+    for (int i = 0; i < getAgentSize(); i++)
+    {
+        for (int j = i + 1; j < getAgentSize(); j++)
+        {
+            Agent &agent1 = getAgent(i);
+            Agent &agent2 = getAgent(j);
+
+            if (areAgentsNeighbors(agent1, agent2))
+            {
+                printf("Agent %d i Agent %d są sąsiadami - wymieniamy visited!\n",
+                       agent1.getId(), agent2.getId());
+
+                // Wymień visited
+                agent1.exchangeVisited(agent2);
+
+                // DEBUG: pokaż wyniki wymiany
+                printf("Po wymianie - Agent %d visited: ", agent1.getId());
+                for (int v : agent1.getVisited())
+                    printf("%d ", v);
+                printf("\n");
+
+                printf("Po wymianie - Agent %d visited: ", agent2.getId());
+                for (int v : agent2.getVisited())
+                    printf("%d ", v);
+                printf("\n");
+            }
+        }
+    }
+    printf("=== KONIEC WYMIANY ===\n");
 }
 
 int Simulation::getIteration()

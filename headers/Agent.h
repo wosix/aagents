@@ -9,7 +9,7 @@
 #include "Vertex.h"
 #include "ColorManager.h"
 
-#define AGENT_MOVE_SPEED 1
+#define AGENT_MOVE_SPEED 10
 
 class Agent
 {
@@ -54,12 +54,20 @@ public:
     bool hasReachedTarget() const;
     void setReachedTarget(bool value);
 
+    void exchangeVisited(Agent &otherAgent);
+
     bool moveToTarget();
 
     bool move(int x, int y);
     void draw();
     void reset();
     ~Agent();
+
+private:
+    vector<int> mergeVisited(const vector<int> &base, const vector<int> &toAdd);
+    void setVisited(vector<int> visited);
+    void setVisitedColor(Color color);
+    Color getVisitedColor();
 };
 
 Agent::Agent(int agentId, int startPointId, Grid &grid, Color agentColor) : id(agentId), startPointId(startPointId), grid(grid), color(agentColor)
@@ -157,6 +165,46 @@ int Agent::getTargetId() { return targetId; }
 bool Agent::hasTarget() { return targetId > -1; }
 bool Agent::hasReachedTarget() const { return reachedTarget; }
 void Agent::setReachedTarget(bool value) { reachedTarget = value; }
+void Agent::setVisitedColor(Color color) { visitedColor = color; }
+Color Agent::getVisitedColor() { return visitedColor; }
+
+vector<int> Agent::mergeVisited(const vector<int> &base, const vector<int> &toAdd)
+{
+    vector<int> result = base;
+    for (int pointId : toAdd)
+    {
+        if (find(result.begin(), result.end(), pointId) == result.end())
+        {
+            result.push_back(pointId);
+        }
+    }
+    return result;
+}
+
+void Agent::setVisited(vector<int> newVisited)
+{
+    visited = newVisited;
+}
+
+void Agent::exchangeVisited(Agent &otherAgent)
+{
+    vector<int> myVisited = getVisited();
+    vector<int> otherVisited = otherAgent.getVisited();
+
+    // Połącz visited obu agentów
+    vector<int> mergedVisited = mergeVisited(myVisited, otherVisited);
+    vector<int> otherMergedVisited = mergeVisited(otherVisited, myVisited);
+
+    // Ustaw połączone listy
+    setVisited(mergedVisited);
+    otherAgent.setVisited(otherMergedVisited);
+
+    Color mixedColor = MixColors(visitedColor, otherAgent.getVisitedColor());
+    setVisitedColor(mixedColor);
+    otherAgent.setVisitedColor(mixedColor);
+
+    printf("Agent %d i Agent %d wymienili się visited!\n", id, otherAgent.getId());
+}
 
 bool Agent::moveToTarget()
 {
