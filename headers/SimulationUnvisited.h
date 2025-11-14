@@ -7,8 +7,14 @@ class SimulationUnvisited : public Simulation
 {
 public:
     using Simulation::Simulation;
+    string getName() override;
     void planMove(Agent &agent) override;
 };
+
+string SimulationUnvisited::getName()
+{
+    return "unvisitedPriority";
+}
 
 void SimulationUnvisited::planMove(Agent &agent)
 {

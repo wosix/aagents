@@ -10,6 +10,7 @@
 class Simulation
 {
 protected:
+    string name;
     Grid &grid;
     vector<Agent> agents;
     int iteration = 1;
@@ -40,6 +41,7 @@ public:
     int getIteration();
     void addIteration();
 
+    virtual string getName() = 0;
     void saveSimulationToFile();
 
     void reset();
@@ -342,7 +344,8 @@ void Simulation::resetExchangeCounter() { exchangeCounter = 0; }
 void Simulation::saveSimulationToFile()
 {
     int lengthCombined = 0;
-    ofstream file("wyniki.txt", ios::app);
+
+    ofstream file(getName(), ios::app);
     if (file.is_open())
     {
         file << "=====================\n"
@@ -356,7 +359,7 @@ void Simulation::saveSimulationToFile()
         file << "\nŁączna długość: " << lengthCombined << endl;
         file << "\nŚrednia długość: " << lengthCombined / getAgentSize() << endl;
         file << "\nLiczba wymian między agentami: " << exchangeCounter << endl;
-        file << "=====================\n"
+        file << "\n=====================\n"
              << endl;
 
         file.close();

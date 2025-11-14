@@ -7,8 +7,14 @@ class SimulationRandom : public Simulation
 {
 public:
     using Simulation::Simulation;
+    string getName() override;
     void planMove(Agent &agent) override;
 };
+
+string SimulationRandom::getName()
+{
+    return "randomWalk";
+}
 
 void SimulationRandom::planMove(Agent &agent)
 {
@@ -27,12 +33,10 @@ void SimulationRandom::planMove(Agent &agent)
             }
         }
 
-        vector<int> unvisited = agent.findUnvisited(available);
-
-        if (!unvisited.empty())
+        if (!available.empty())
         {
-            int randomIndex = GetRandomValue(0, unvisited.size() - 1);
-            int chosenTarget = unvisited[randomIndex];
+            int randomIndex = GetRandomValue(0, available.size() - 1);
+            int chosenTarget = available[randomIndex];
 
             if (grid.reserveVertex(chosenTarget, agent.getId()))
             {
