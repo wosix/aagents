@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include <fstream>
 #include <set>
 #include <cstring>
 #include "Grid.h"
@@ -16,8 +17,11 @@ protected:
 
 public:
     Simulation(Grid &grid, int agentCount);
-    virtual void update() = 0;
+    void update();
+    virtual void planMove(Agent &agent) = 0;
+    void makeMove(Agent &agent);
 
+    bool hasAgentsVisitedAllPoints();
     bool everyAgentHasReachedTarget();
 
     Vertex &getPoint(int pointId);
@@ -44,7 +48,6 @@ public:
 
 set<int> getRandomIds(int gridSize, int agentCount)
 {
-    SetRandomSeed(1);
     set<int> ids = {};
     while (ids.size() < agentCount)
     {
@@ -57,8 +60,8 @@ set<int> getRandomIds(int gridSize, int agentCount)
 Simulation::Simulation(Grid &grid, int agentCount) : grid(grid)
 {
     int agentId = 0;
-    // to jest do testow
     set<int> startingIds = getRandomIds(grid.getSize(), agentCount);
+    // do testow
     // set<int> startingIds = {0, 6};
     for (int id : startingIds)
     {
@@ -68,6 +71,77 @@ Simulation::Simulation(Grid &grid, int agentCount) : grid(grid)
         agents.push_back(agent);
         agentId++;
     }
+}
+
+void Simulation::update()
+{
+    printf("=== UPDATE ===\n");
+
+    if (hasAgentsVisitedAllPoints())
+    {
+        printf("Wszystkie punkty odwiedzone!\n");
+        saveSimulationToFile();
+        return;
+    }
+
+    // DEBUG: Stan agentów
+    printf("Stan agentów przed planowaniem:\n");
+    for (int i = 0; i < getAgentSize(); i++)
+    {
+        Agent &agent = getAgent(i);
+        printf("Agent %d: target=%d, reachedTarget=%d\n",
+               i, agent.getTargetId(), agent.hasReachedTarget());
+    }
+
+    // FAZA 1 - WYMIANA
+    exchangeVisitedBetweenNeighbors();
+
+    // FAZA 2 - PLANOWANIE
+    bool allReached = everyAgentHasReachedTarget();
+    printf("everyAgentHasReachedTarget() = %d\n", allReached);
+
+    if (allReached)
+    {
+        printf("WSZYSCY DOTARLI - PLANUJEMY!\n");
+        for (int i = 0; i < getAgentSize(); i++)
+        {
+            Agent &agent = getAgent(i);
+            planMove(agent);
+        }
+    }
+
+    // FAZA 3 - RUCH
+    printf("WYKONUJEMY RUCH:\n");
+    for (int i = 0; i < getAgentSize(); i++)
+    {
+        Agent &agent = getAgent(i);
+        makeMove(agent);
+        printf("Agent %d po makeMove: target=%d, reached=%d\n",
+               i, agent.getTargetId(), agent.hasReachedTarget());
+    }
+
+    printf("=== KONEC UPDATE ===\n\n");
+}
+
+void Simulation::makeMove(Agent &agent)
+{
+    if (agent.hasTarget() && !agent.hasReachedTarget())
+    {
+        agent.moveToTarget();
+    }
+}
+
+bool Simulation::hasAgentsVisitedAllPoints()
+{
+    set<int> visitedTogether = getVisitedTogether();
+    for (int pointId : getGridPointsIds())
+    {
+        if (find(visitedTogether.begin(), visitedTogether.end(), pointId) == visitedTogether.end())
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool Simulation::everyAgentHasReachedTarget()
@@ -184,15 +258,9 @@ vector<int> Simulation::getAvailablePointIds(int pointId)
     return available;
 }
 
-int Simulation::getAgentSize()
-{
-    return agents.size();
-}
+int Simulation::getAgentSize() { return agents.size(); }
 
-vector<Agent> Simulation::getAgents()
-{
-    return agents;
-}
+vector<Agent> Simulation::getAgents() { return agents; }
 
 Agent &Simulation::getAgent(int agentId)
 {
@@ -277,7 +345,8 @@ void Simulation::saveSimulationToFile()
     ofstream file("wyniki.txt", ios::app);
     if (file.is_open())
     {
-        file << "=====================" << endl;
+        file << "=====================\n"
+             << endl;
         file << "Iteracja - " << getIteration() << endl;
         for (Agent agent : getAgents())
         {

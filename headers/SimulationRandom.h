@@ -1,6 +1,4 @@
 #include <raylib.h>
-#include <set>
-#include <cstring>
 #include "Simulation.h"
 #include "Grid.h"
 #include "Agent.h"
@@ -9,74 +7,43 @@ class SimulationRandom : public Simulation
 {
 public:
     using Simulation::Simulation;
-
-    void update() override;
-
-    void makeMove(Agent &agent);
-
-    bool hasAgentsVisitedAllPoints();
-    void setRandomTarget(Agent &agent);
+    void planMove(Agent &agent) override;
 };
 
-void SimulationRandom::update()
+void SimulationRandom::planMove(Agent &agent)
 {
-    if (hasAgentsVisitedAllPoints())
+    // tylko jeśli agent nie ma celu LUB dotarł do celu
+    if (!agent.hasTarget() || agent.hasReachedTarget())
     {
-        int ag = 1;
-        char text[32] = "";
-        printf("\n");
-        printf("%d:", getIteration());
-        for (Agent agent : getAgents())
+        Vertex &current = grid.getVertex(agent.getCurrentPointId());
+        vector<int> neighbors = current.getNeighbors();
+
+        vector<int> available;
+        for (int neighborId : neighbors)
         {
-            printf("\ni%d: %d", ag, static_cast<int>(agent.getPathLength()));
-            ag++;
+            if (!grid.isVertexBusy(neighborId))
+            {
+                available.push_back(neighborId);
+            }
         }
-        printf("\n");
 
-        reset();
-        WaitTime(1);
-        return;
-    }
+        vector<int> unvisited = agent.findUnvisited(available);
 
-    for (int i = 0; i < getAgentSize(); i++)
-    {
-        Agent &agent = getAgent(i);
-        makeMove(agent);
-    }
-}
-
-void SimulationRandom::makeMove(Agent &agent)
-{
-    if (!agent.hasTarget())
-    {
-        setRandomTarget(agent);
-        return;
-    }
-
-    if (agent.moveToTarget())
-    {
-        setRandomTarget(agent);
-    }
-}
-
-bool SimulationRandom::hasAgentsVisitedAllPoints()
-{
-    set<int> visitedTogether = getVisitedTogether();
-    for (int pointId : getGridPointsIds())
-    {
-        if (find(visitedTogether.begin(), visitedTogether.end(), pointId) == visitedTogether.end())
+        if (!unvisited.empty())
         {
-            return false;
+            int randomIndex = GetRandomValue(0, unvisited.size() - 1);
+            int chosenTarget = unvisited[randomIndex];
+
+            if (grid.reserveVertex(chosenTarget, agent.getId()))
+            {
+                agent.setTargetId(chosenTarget);
+            }
+        }
+        else
+        {
+            // Brak dostępnych - zostaje bez celu
+            agent.setTargetId(-1);
+            agent.setReachedTarget(true);
         }
     }
-    return true;
-}
-
-void SimulationRandom::setRandomTarget(Agent &agent)
-{
-    Vertex currentVertex = grid.getVertex(agent.getCurrentPointId());
-    vector<int> neighbors = currentVertex.getNeighbors();
-    int randomIndex = GetRandomValue(0, neighbors.size() - 1);
-    int nextTarget = neighbors[randomIndex];
-    agent.setTargetId(nextTarget);
 }
