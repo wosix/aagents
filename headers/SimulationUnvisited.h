@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <fstream>
 #include <set>
 #include <cstring>
 #include "Simulation.h"
@@ -23,12 +24,24 @@ public:
 void SimulationUnvisited::update()
 {
 
-    printf("=== UPDATE Iteracja: %d ===\n", getIteration());
+    printf("=== UPDATE ===\n");
 
     if (hasAgentsVisitedAllPoints())
     {
         printf("Wszystkie punkty odwiedzone!\n");
-        // ... reszta kodu ...
+
+        saveSimulationToFile();
+
+        // int ag = 1;
+        // printf("\n");
+        // printf("%d:", getIteration());
+        // for (Agent agent : getAgents())
+        // {
+        //     printf("\ni%d: %d", agent.getId(), static_cast<int>(agent.getPathLength()));
+        //     ag++;
+        // }
+        // printf("\n");
+
         return;
     }
 
@@ -67,7 +80,6 @@ void SimulationUnvisited::update()
                i, agent.getTargetId(), agent.hasReachedTarget());
     }
 
-    addIteration();
     printf("=== KONEC UPDATE ===\n\n");
 }
 

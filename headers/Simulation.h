@@ -12,6 +12,7 @@ protected:
     Grid &grid;
     vector<Agent> agents;
     int iteration = 1;
+    int exchangeCounter = 0;
 
 public:
     Simulation(Grid &grid, int agentCount);
@@ -30,9 +31,12 @@ public:
 
     bool areAgentsNeighbors(Agent &agent1, Agent &agent2);
     void exchangeVisitedBetweenNeighbors();
+    void resetExchangeCounter();
 
     int getIteration();
     void addIteration();
+
+    void saveSimulationToFile();
 
     void reset();
     void draw();
@@ -237,6 +241,7 @@ void Simulation::exchangeVisitedBetweenNeighbors()
 
                 // Wymień visited
                 agent1.exchangeVisited(agent2);
+                exchangeCounter++;
 
                 // DEBUG: pokaż wyniki wymiany
                 printf("Po wymianie - Agent %d visited: ", agent1.getId());
@@ -264,6 +269,38 @@ void Simulation::addIteration()
     iteration++;
 }
 
+void Simulation::resetExchangeCounter() { exchangeCounter = 0; }
+
+void Simulation::saveSimulationToFile()
+{
+    int lengthCombined = 0;
+    ofstream file("wyniki.txt", ios::app);
+    if (file.is_open())
+    {
+        file << "=====================" << endl;
+        file << "Iteracja - " << getIteration() << endl;
+        for (Agent agent : getAgents())
+        {
+            file << "Agent " << agent.getId() << " przebył drogę: " << static_cast<int>(agent.getPathLength()) << endl;
+            lengthCombined += agent.getPathLength();
+        }
+        file << "\nŁączna długość: " << lengthCombined << endl;
+        file << "\nŚrednia długość: " << lengthCombined / getAgentSize() << endl;
+        file << "\nLiczba wymian między agentami: " << exchangeCounter << endl;
+        file << "=====================\n"
+             << endl;
+
+        file.close();
+    }
+    else
+    {
+        printf("ERR: Nie można otworzyć pliku!");
+    }
+
+    reset();
+    WaitTime(1);
+}
+
 void Simulation::reset()
 {
     for (int i = 0; i < agents.size(); i++)
@@ -271,6 +308,7 @@ void Simulation::reset()
         agents[i].reset();
     }
     addIteration();
+    resetExchangeCounter();
 }
 
 void Simulation::draw()
