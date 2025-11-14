@@ -28,6 +28,7 @@ public:
     void connectPoints(int id1, int id2);
 
     bool reserveVertex(int vertexId, int agentId);
+    void freeAllVertex();
     void freeVertex(int vertexId);
     bool isVertexBusy(int vertexId);
     bool isVertexBusyByOtherAgent(int vertexId, int agentId);
@@ -89,6 +90,14 @@ bool Grid::reserveVertex(int vertexId, int agentId)
         return true;
     }
     return false;
+}
+
+void Grid::freeAllVertex()
+{
+    for (const auto &element : points)
+    {
+        freeVertex(element.first);
+    }
 }
 
 void Grid::freeVertex(int vertexId)

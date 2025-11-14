@@ -303,6 +303,7 @@ void Simulation::saveSimulationToFile()
 
 void Simulation::reset()
 {
+    grid.freeAllVertex();
     for (int i = 0; i < agents.size(); i++)
     {
         agents[i].reset();

@@ -9,7 +9,7 @@
 #include "Vertex.h"
 #include "ColorManager.h"
 
-#define AGENT_MOVE_SPEED 10
+#define AGENT_MOVE_SPEED 100
 
 class Agent
 {
@@ -263,10 +263,12 @@ void Agent::reset()
 {
     visited.clear();
     pathLength = 0;
-    targetId = -1;
     setCurrentPointId(startPointId);
-    Vertex startPoint = grid.getVertex(startPointId);
-    setLocation(startPoint.getX(), startPoint.getY());
+    Vertex startVertex = grid.getVertex(startPointId);
+    setLocation(startVertex.getX(), startVertex.getY());
+    setTargetId(-1);
+    grid.reserveVertex(startVertex.getId(), id);
+    visitedColor = Brighten(color, 1.8);
 }
 
 void Agent::draw()
