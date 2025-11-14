@@ -36,18 +36,20 @@ void SimulationRandom::planMove(Agent &agent)
         if (!available.empty())
         {
             int randomIndex = GetRandomValue(0, available.size() - 1);
-            int chosenTarget = available[randomIndex];
+            int chosenTargetId = available[randomIndex];
 
-            if (grid.reserveVertex(chosenTarget, agent.getId()))
+            if (grid.reserveVertex(chosenTargetId, agent.getId()))
             {
-                agent.setTargetId(chosenTarget);
+                agent.setTargetId(chosenTargetId);
             }
+            printf("Agent %d - from %d to %d", agent.getId(), current.getId(), chosenTargetId);
         }
         else
         {
             // Brak dostępnych - zostaje bez celu
             agent.setTargetId(-1);
             agent.setReachedTarget(true);
+            printf("Agent %d - waits on %d", agent.getId(), current.getId());
         }
     }
 }

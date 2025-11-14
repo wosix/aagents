@@ -1,0 +1,315 @@
+=====================
+
+Iteracja - 1
+Agent 0 przebył drogę: 1176
+
+Łączna długość: 1176
+
+Średnia długość: 1176
+
+Liczba wymian między agentami: 0
+
+=====================
+
+=====================
+
+Iteracja - 2
+Agent 0 przebył drogę: 1385
+
+Łączna długość: 1385
+
+Średnia długość: 1385
+
+Liczba wymian między agentami: 0
+
+=====================
+
+=====================
+
+Iteracja - 3
+Agent 0 przebył drogę: 1903
+
+Łączna długość: 1903
+
+Średnia długość: 1903
+
+Liczba wymian między agentami: 0
+
+=====================
+
+=====================
+
+Iteracja - 4
+Agent 0 przebył drogę: 2183
+
+Łączna długość: 2183
+
+Średnia długość: 2183
+
+Liczba wymian między agentami: 0
+
+=====================
+
+=====================
+
+Iteracja - 5
+Agent 0 przebył drogę: 1583
+
+Łączna długość: 1583
+
+Średnia długość: 1583
+
+Liczba wymian między agentami: 0
+
+=====================
+
+=====================
+
+Iteracja - 1
+Agent 0 przebył drogę: 707
+Agent 1 przebył drogę: 707
+
+Łączna długość: 1414
+
+Średnia długość: 707
+
+Liczba wymian między agentami: 0
+
+=====================
+
+=====================
+
+Iteracja - 2
+Agent 0 przebył drogę: 1196
+Agent 1 przebył drogę: 1182
+
+Łączna długość: 2378
+
+Średnia długość: 1189
+
+Liczba wymian między agentami: 7
+
+=====================
+
+=====================
+
+Iteracja - 3
+Agent 0 przebył drogę: 806
+Agent 1 przebył drogę: 806
+
+Łączna długość: 1612
+
+Średnia długość: 806
+
+Liczba wymian między agentami: 0
+
+=====================
+
+=====================
+
+Iteracja - 4
+Agent 0 przebył drogę: 1432
+Agent 1 przebył drogę: 1430
+
+Łączna długość: 2862
+
+Średnia długość: 1431
+
+Liczba wymian między agentami: 1
+
+=====================
+
+=====================
+
+Iteracja - 5
+Agent 0 przebył drogę: 1100
+Agent 1 przebył drogę: 1098
+
+Łączna długość: 2198
+
+Średnia długość: 1099
+
+Liczba wymian między agentami: 1
+
+=====================
+
+=====================
+
+Iteracja - 1
+Agent 0 przebył drogę: 474
+Agent 1 przebył drogę: 474
+Agent 2 przebył drogę: 472
+Agent 3 przebył drogę: 474
+
+Łączna długość: 1894
+
+Średnia długość: 473
+
+Liczba wymian między agentami: 60
+
+=====================
+
+=====================
+
+Iteracja - 2
+Agent 0 przebył drogę: 1685
+Agent 1 przebył drogę: 1685
+Agent 2 przebył drogę: 1683
+Agent 3 przebył drogę: 1683
+
+Łączna długość: 6736
+
+Średnia długość: 1684
+
+Liczba wymian między agentami: 122
+
+=====================
+
+=====================
+
+Iteracja - 3
+Agent 0 przebył drogę: 546
+Agent 1 przebył drogę: 546
+Agent 2 przebył drogę: 538
+Agent 3 przebył drogę: 546
+
+Łączna długość: 2176
+
+Średnia długość: 544
+
+Liczba wymian między agentami: 49
+
+=====================
+
+=====================
+
+Iteracja - 4
+Agent 0 przebył drogę: 492
+Agent 1 przebył drogę: 492
+Agent 2 przebył drogę: 474
+Agent 3 przebył drogę: 492
+
+Łączna długość: 1950
+
+Średnia długość: 487
+
+Liczba wymian między agentami: 69
+
+=====================
+
+=====================
+
+Iteracja - 5
+Agent 0 przebył drogę: 390
+Agent 1 przebył drogę: 390
+Agent 2 przebył drogę: 388
+Agent 3 przebył drogę: 390
+
+Łączna długość: 1558
+
+Średnia długość: 389
+
+Liczba wymian między agentami: 43
+
+=====================
+
+=====================
+
+Iteracja - 1
+Agent 0 przebył drogę: 181
+Agent 1 przebył drogę: 181
+Agent 2 przebył drogę: 181
+Agent 3 przebył drogę: 181
+Agent 4 przebył drogę: 181
+Agent 5 przebył drogę: 181
+Agent 6 przebył drogę: 126
+Agent 7 przebył drogę: 181
+
+Łączna długość: 1393
+
+Średnia długość: 174
+
+Liczba wymian między agentami: 58
+
+=====================
+
+=====================
+
+Iteracja - 2
+Agent 0 przebył drogę: 197
+Agent 1 przebył drogę: 197
+Agent 2 przebył drogę: 197
+Agent 3 przebył drogę: 197
+Agent 4 przebył drogę: 197
+Agent 5 przebył drogę: 197
+Agent 6 przebył drogę: 181
+Agent 7 przebył drogę: 189
+
+Łączna długość: 1552
+
+Średnia długość: 194
+
+Liczba wymian między agentami: 69
+
+=====================
+
+=====================
+
+Iteracja - 3
+Agent 0 przebył drogę: 182
+Agent 1 przebył drogę: 182
+Agent 2 przebył drogę: 164
+Agent 3 przebył drogę: 182
+Agent 4 przebył drogę: 182
+Agent 5 przebył drogę: 178
+Agent 6 przebył drogę: 174
+Agent 7 przebył drogę: 174
+
+Łączna długość: 1418
+
+Średnia długość: 177
+
+Liczba wymian między agentami: 64
+
+=====================
+
+=====================
+
+Iteracja - 4
+Agent 0 przebył drogę: 129
+Agent 1 przebył drogę: 129
+Agent 2 przebył drogę: 129
+Agent 3 przebył drogę: 123
+Agent 4 przebył drogę: 129
+Agent 5 przebył drogę: 129
+Agent 6 przebył drogę: 128
+Agent 7 przebył drogę: 129
+
+Łączna długość: 1025
+
+Średnia długość: 128
+
+Liczba wymian między agentami: 21
+
+=====================
+
+=====================
+
+Iteracja - 5
+Agent 0 przebył drogę: 126
+Agent 1 przebył drogę: 126
+Agent 2 przebył drogę: 122
+Agent 3 przebył drogę: 126
+Agent 4 przebył drogę: 126
+Agent 5 przebył drogę: 126
+Agent 6 przebył drogę: 118
+Agent 7 przebył drogę: 126
+
+Łączna długość: 996
+
+Średnia długość: 124
+
+Liczba wymian między agentami: 55
+
+=====================
+

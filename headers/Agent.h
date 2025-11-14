@@ -9,7 +9,7 @@
 #include "Vertex.h"
 #include "ColorManager.h"
 
-#define AGENT_MOVE_SPEED 100
+#define AGENT_MOVE_SPEED 3
 
 class Agent
 {
@@ -84,7 +84,9 @@ Agent::Agent(int agentId, int startPointId, Grid &grid, Color agentColor) : id(a
 }
 
 int Agent::getId() { return id; }
+
 void Agent::setX(int val) { x = val; }
+
 void Agent::setY(int val) { y = val; }
 
 void Agent::setTargetId(int pointId)
@@ -161,11 +163,17 @@ vector<int> Agent::findUnvisited(vector<int> neighbors)
 }
 
 int Agent::getPathLength() { return pathLength; }
+
 int Agent::getTargetId() { return targetId; }
+
 bool Agent::hasTarget() { return targetId > -1; }
+
 bool Agent::hasReachedTarget() const { return reachedTarget; }
+
 void Agent::setReachedTarget(bool value) { reachedTarget = value; }
+
 void Agent::setVisitedColor(Color color) { visitedColor = color; }
+
 Color Agent::getVisitedColor() { return visitedColor; }
 
 vector<int> Agent::mergeVisited(const vector<int> &base, const vector<int> &toAdd)
@@ -181,10 +189,7 @@ vector<int> Agent::mergeVisited(const vector<int> &base, const vector<int> &toAd
     return result;
 }
 
-void Agent::setVisited(vector<int> newVisited)
-{
-    visited = newVisited;
-}
+void Agent::setVisited(vector<int> newVisited) { visited = newVisited; }
 
 void Agent::exchangeVisited(Agent &otherAgent)
 {
@@ -273,11 +278,11 @@ void Agent::reset()
 
 void Agent::draw()
 {
-    char text[32] = "NIEZLY AGENT: ";
-    string length = to_string(static_cast<int>(pathLength));
-    strcat(text, length.c_str());
+    // char text[32] = "NIEZLY AGENT: ";
+    // string length = to_string(static_cast<int>(pathLength));
+    // strcat(text, length.c_str());
 
-    DrawText(text, 0, 0, 48, BLACK);
+    // DrawText(text, 0, 0, 48, BLACK);
 
     for (int visitedId : visited)
     {

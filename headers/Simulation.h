@@ -64,7 +64,9 @@ Simulation::Simulation(Grid &grid, int agentCount) : grid(grid)
     int agentId = 0;
     set<int> startingIds = getRandomIds(grid.getSize(), agentCount);
     // do testow
-    // set<int> startingIds = {0, 6};
+    // set<int> startingIds = {
+    //     0,
+    // };
     for (int id : startingIds)
     {
         Vertex &startPoint = grid.getVertex(id);
@@ -77,7 +79,11 @@ Simulation::Simulation(Grid &grid, int agentCount) : grid(grid)
 
 void Simulation::update()
 {
-    printf("=== UPDATE ===\n");
+    // pause
+    if (IsKeyPressed(KEY_SPACE))
+    {
+        WaitTime(1);
+    }
 
     if (hasAgentsVisitedAllPoints())
     {
@@ -87,24 +93,21 @@ void Simulation::update()
     }
 
     // DEBUG: Stan agentów
-    printf("Stan agentów przed planowaniem:\n");
-    for (int i = 0; i < getAgentSize(); i++)
-    {
-        Agent &agent = getAgent(i);
-        printf("Agent %d: target=%d, reachedTarget=%d\n",
-               i, agent.getTargetId(), agent.hasReachedTarget());
-    }
+    // for (int i = 0; i < getAgentSize(); i++)
+    // {
+    //     Agent &agent = getAgent(i);
+    //     printf("Agent %d: target=%d, reachedTarget=%d\n",
+    //            i, agent.getTargetId(), agent.hasReachedTarget());
+    // }
 
     // FAZA 1 - WYMIANA
     exchangeVisitedBetweenNeighbors();
 
     // FAZA 2 - PLANOWANIE
     bool allReached = everyAgentHasReachedTarget();
-    printf("everyAgentHasReachedTarget() = %d\n", allReached);
 
     if (allReached)
     {
-        printf("WSZYSCY DOTARLI - PLANUJEMY!\n");
         for (int i = 0; i < getAgentSize(); i++)
         {
             Agent &agent = getAgent(i);
@@ -113,16 +116,11 @@ void Simulation::update()
     }
 
     // FAZA 3 - RUCH
-    printf("WYKONUJEMY RUCH:\n");
     for (int i = 0; i < getAgentSize(); i++)
     {
         Agent &agent = getAgent(i);
         makeMove(agent);
-        printf("Agent %d po makeMove: target=%d, reached=%d\n",
-               i, agent.getTargetId(), agent.hasReachedTarget());
     }
-
-    printf("=== KONEC UPDATE ===\n\n");
 }
 
 void Simulation::makeMove(Agent &agent)
@@ -157,22 +155,19 @@ bool Simulation::everyAgentHasReachedTarget()
     // }
     // return true;
 
-    printf("Sprawdzam everyAgentHasReachedTarget():\n");
     for (int i = 0; i < getAgentSize(); i++)
     {
         Agent &agent = getAgent(i);
         bool hasTarget = agent.hasTarget();
         bool reached = agent.hasReachedTarget();
-        printf("  Agent %d: hasTarget=%d, reachedTarget=%d\n", i, hasTarget, reached);
 
         // Jeśli agent ma cel ale jeszcze nie dotarł - return false
         if (hasTarget && !reached)
         {
-            printf("  -> Agent %d jeszcze nie dotarł do celu!\n", i);
+            // printf("  -> Agent %d jeszcze nie dotarł do celu!\n", i);
             return false;
         }
     }
-    printf("  -> WSZYSCY DOTARLI DO CELÓW!\n");
     return true;
 }
 
@@ -214,48 +209,47 @@ vector<int> Simulation::getAvailablePointIds(int pointId)
     // }
     // return available;
 
-    printf("DEBUG: getAvailablePointIds dla pointId: %d\n", pointId);
+    // printf("DEBUG: getAvailablePointIds dla pointId: %d\n", pointId);
 
     // ✅ DODAJ SPRAWDZENIE CZY VERTEX ISTNIEJE
     if (!grid.vertexExists(pointId))
     {
-        printf("KRYTYCZNY BŁĄD: Vertex %d nie istnieje w getAvailablePointIds!\n", pointId);
-        return {}; // zwróć pustą listę
+        // printf("KRYTYCZNY BŁĄD: Vertex %d nie istnieje w getAvailablePointIds!\n", pointId);
+        return {};
     }
 
     Vertex currentVertex = grid.getVertex(pointId);
     vector<int> neighbors = currentVertex.getNeighbors();
 
-    printf("Sąsiedzi vertex %d: ", pointId);
-    for (int n : neighbors)
-        printf("%d ", n);
-    printf("\n");
+    // printf("Sąsiedzi vertex %d: ", pointId);
+    // for (int n : neighbors)
+    //     printf("%d ", n);
+    // printf("\n");
 
     vector<int> available;
     for (int neighborId : neighbors)
     {
-        // ✅ SPRAWDŹ CZY SĄSIAD ISTNIEJE
         if (!grid.vertexExists(neighborId))
         {
-            printf("BŁĄD: Sąsiad %d nie istnieje!\n", neighborId);
+            // printf("BŁĄD: Sąsiad %d nie istnieje!\n", neighborId);
             continue;
         }
 
         if (!grid.isVertexBusy(neighborId))
         {
             available.push_back(neighborId);
-            printf("Vertex %d jest dostępny\n", neighborId);
+            // printf("Vertex %d jest dostępny\n", neighborId);
         }
         else
         {
-            printf("Vertex %d jest zajęty\n", neighborId);
+            // printf("Vertex %d jest zajęty\n", neighborId);
         }
     }
 
-    printf("Dostępni sąsiedzi: ");
-    for (int a : available)
-        printf("%d ", a);
-    printf("\n");
+    // printf("Dostępni sąsiedzi: ");
+    // for (int a : available)
+    //     printf("%d ", a);
+    // printf("\n");
 
     return available;
 }
@@ -326,7 +320,7 @@ void Simulation::exchangeVisitedBetweenNeighbors()
             }
         }
     }
-    printf("=== KONIEC WYMIANY ===\n");
+    printf("===== =====\n");
 }
 
 int Simulation::getIteration()

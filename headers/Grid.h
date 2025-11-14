@@ -335,8 +335,8 @@ Grid makeGrid(Grid grid)
 Grid makeTestGrid(Grid grid)
 {
     grid.addPoint(100, 100);
-    grid.addPoint(200, 100);
-    grid.addPoint(300, 100);
+    // grid.addPoint(200, 100);
+    // grid.addPoint(300, 100);
     grid.addPoint(400, 100);
     grid.addPoint(500, 100);
     grid.addPoint(600, 100);
@@ -350,8 +350,6 @@ Grid makeTestGrid(Grid grid)
     grid.connectPoints(3, 2);
     grid.connectPoints(3, 4);
     grid.connectPoints(5, 4);
-    grid.connectPoints(5, 6);
-    grid.connectPoints(7, 6);
 
     return grid;
 }
