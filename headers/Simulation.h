@@ -35,7 +35,7 @@ public:
     Agent &getAgent(int agentId);
 
     bool areAgentsNeighbors(Agent &agent1, Agent &agent2);
-    void exchangeVisitedBetweenNeighbors();
+    virtual void exchangeVisitedBetweenNeighbors();
     void resetExchangeCounter();
 
     int getIteration();
@@ -82,7 +82,7 @@ void Simulation::update()
     // pause
     if (IsKeyPressed(KEY_SPACE))
     {
-        WaitTime(1);
+        WaitTime(5);
     }
 
     if (hasAgentsVisitedAllPoints())
