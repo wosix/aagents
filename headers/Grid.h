@@ -139,7 +139,7 @@ void Grid::draw(set<int> visited)
 
         // draw vertex id
         string vertexId = to_string(id);
-        // DrawText(vertexId.c_str(), point.getX(), point.getY(), 48, BLACK);
+        DrawText(vertexId.c_str(), point.getX(), point.getY(), 48, LIGHTGRAY);
     }
 
     for (const auto connection : connections)
@@ -353,3 +353,17 @@ Grid makeTestGrid(Grid grid)
 
     return grid;
 }
+
+// algoorytm gnp
+
+// erdos-renyi
+
+// n liczba wierzch
+// p prawdopodobnstwo kraw
+// r losowa liczb
+
+// r < p
+
+// graph viiizzzzzzz
+
+// houssse if graphgs
