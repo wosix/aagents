@@ -42,6 +42,7 @@ public:
 
     vector<int> getVisited();
     void addVisited(int pointId);
+    bool hasVisitedVertex(int vertexId);
     bool hasVisitedAllNeighbors();
     bool hasVisitedAllPoints(vector<int> ids);
     vector<int> findUnvisited(vector<int> neighbors);
@@ -122,6 +123,11 @@ void Agent::addVisited(int pointId)
     {
         visited.push_back(pointId);
     }
+}
+
+bool Agent::hasVisitedVertex(int vertexId)
+{
+    return find(visited.begin(), visited.end(), vertexId) != visited.end();
 }
 
 bool Agent::hasVisitedAllNeighbors()
