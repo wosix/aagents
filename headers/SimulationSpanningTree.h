@@ -193,11 +193,15 @@ deque<int> SimulationSpanningTree::findPathToNearestUnvisited(int agentId, int v
     }
     distances[vertexId] = 0.0;
 
-    auto comp = [](const pair<double, int> &a, const pair<double, int> &b)
+    struct CompareCost
     {
-        return a.first > b.first;
+        bool operator()(const pair<double, int> &a, const pair<double, int> &b)
+        {
+            return a.first > b.first;
+        }
     };
-    priority_queue<pair<double, int>, vector<pair<double, int>>, decltype(comp)> pq(comp);
+
+    priority_queue<pair<double, int>, vector<pair<double, int>>, CompareCost> pq(CompareCost{});
     pq.push({0.0, vertexId});
 
     int nearestEdge = -1;
