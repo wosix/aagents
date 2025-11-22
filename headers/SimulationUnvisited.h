@@ -18,7 +18,6 @@ string SimulationUnvisited::getName()
 
 void SimulationUnvisited::planMove(Agent &agent)
 {
-    // Tylko jeśli agent nie ma celu LUB dotarł do celu
     if (!agent.hasTarget() || agent.hasReachedTarget())
     {
         Vertex &current = grid.getVertex(agent.getCurrentPointId());
@@ -57,7 +56,6 @@ void SimulationUnvisited::planMove(Agent &agent)
         }
         else
         {
-            // Brak dostępnych - zostaje bez celu
             agent.setTargetId(-1);
             agent.setReachedTarget(true);
         }

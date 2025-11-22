@@ -82,8 +82,6 @@ void SimulationSpanningTree::exchangeVisitedBetweenNeighbors()
         return;
     }
 
-    printf("=== WYMIANA VISITED ? ===\n");
-
     for (int i = 0; i < getAgentSize(); i++)
     {
         for (int j = i + 1; j < getAgentSize(); j++)
@@ -96,25 +94,12 @@ void SimulationSpanningTree::exchangeVisitedBetweenNeighbors()
                 printf("Agent %d i Agent %d są sąsiadami - wymieniamy visited!\n",
                        agent1.getId(), agent2.getId());
 
-                // Wymień visited
                 agent1.exchangeVisited(agent2);
                 exchangeTrees(agent1, agent2);
                 exchangeCounter++;
-
-                // DEBUG: pokaż wyniki wymiany
-                printf("Po wymianie - Agent %d visited: ", agent1.getId());
-                for (int v : agent1.getVisited())
-                    printf("%d ", v);
-                printf("\n");
-
-                printf("Po wymianie - Agent %d visited: ", agent2.getId());
-                for (int v : agent2.getVisited())
-                    printf("%d ", v);
-                printf("\n");
             }
         }
     }
-    printf("===== =====\n");
 }
 
 void SimulationSpanningTree::updateTrees(Agent &agent)

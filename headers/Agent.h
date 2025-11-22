@@ -100,7 +100,6 @@ void Agent::setCurrentPointId(int pointId)
 {
     if (!grid.vertexExists(pointId))
     {
-        printf("Agent %d: nie można ustawić currentPointId na nieistniejący vertex %d\n", id, pointId);
         return;
     }
     currentPointId = pointId;
@@ -202,11 +201,9 @@ void Agent::exchangeVisited(Agent &otherAgent)
     vector<int> myVisited = getVisited();
     vector<int> otherVisited = otherAgent.getVisited();
 
-    // Połącz visited obu agentów
     vector<int> mergedVisited = mergeVisited(myVisited, otherVisited);
     vector<int> otherMergedVisited = mergeVisited(otherVisited, myVisited);
 
-    // Ustaw połączone listy
     setVisited(mergedVisited);
     otherAgent.setVisited(otherMergedVisited);
 
@@ -228,27 +225,13 @@ bool Agent::moveToTarget()
 
     if (reached)
     {
-        // Dotarł do celu - zajmij wierzchołek
         grid.freeVertex(currentPointId);
         grid.reserveVertex(targetId, id);
         setCurrentPointId(targetId);
-        reachedTarget = true; // Oznacz że dotarł
+        reachedTarget = true;
     }
 
     return reached;
-
-    // Vertex &target = grid.getVertex(targetId);
-    // if (move(target.getX(), target.getY()))
-    // {
-    //     target.free();
-    //     setCurrentPointId(targetId);
-    //     setTargetId(-1);
-    //     return true;
-    // }
-    // else
-    // {
-    //     return false;
-    // }
 }
 
 bool Agent::move(int targetX, int targetY)

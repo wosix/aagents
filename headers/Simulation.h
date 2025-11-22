@@ -92,14 +92,6 @@ void Simulation::update()
         return;
     }
 
-    // DEBUG: Stan agentów
-    // for (int i = 0; i < getAgentSize(); i++)
-    // {
-    //     Agent &agent = getAgent(i);
-    //     printf("Agent %d: target=%d, reachedTarget=%d\n",
-    //            i, agent.getTargetId(), agent.hasReachedTarget());
-    // }
-
     // FAZA 1 - WYMIANA
     exchangeVisitedBetweenNeighbors();
 
@@ -146,25 +138,14 @@ bool Simulation::hasAgentsVisitedAllPoints()
 
 bool Simulation::everyAgentHasReachedTarget()
 {
-    // for (int i = 0; i < agents.size(); i++)
-    // {
-    //     if (!getAgent(i).hasReachedTarget())
-    //     {
-    //         return false;
-    //     }
-    // }
-    // return true;
-
     for (int i = 0; i < getAgentSize(); i++)
     {
         Agent &agent = getAgent(i);
         bool hasTarget = agent.hasTarget();
         bool reached = agent.hasReachedTarget();
 
-        // Jeśli agent ma cel ale jeszcze nie dotarł - return false
         if (hasTarget && !reached)
         {
-            // printf("  -> Agent %d jeszcze nie dotarł do celu!\n", i);
             return false;
         }
     }
@@ -196,60 +177,27 @@ set<int> Simulation::getVisitedTogether()
 
 vector<int> Simulation::getAvailablePointIds(int pointId)
 {
-    // Vertex currentVertex = grid.getVertex(pointId);
-    // vector<int> neighbors = currentVertex.getNeighbors();
-
-    // vector<int> available;
-    // for (int neighborId : neighbors)
-    // {
-    //     if (!grid.isVertexBusy(neighborId))
-    //     {
-    //         available.push_back(neighborId);
-    //     }
-    // }
-    // return available;
-
-    // printf("DEBUG: getAvailablePointIds dla pointId: %d\n", pointId);
-
-    // ✅ DODAJ SPRAWDZENIE CZY VERTEX ISTNIEJE
     if (!grid.vertexExists(pointId))
     {
-        // printf("KRYTYCZNY BŁĄD: Vertex %d nie istnieje w getAvailablePointIds!\n", pointId);
         return {};
     }
 
     Vertex currentVertex = grid.getVertex(pointId);
     vector<int> neighbors = currentVertex.getNeighbors();
 
-    // printf("Sąsiedzi vertex %d: ", pointId);
-    // for (int n : neighbors)
-    //     printf("%d ", n);
-    // printf("\n");
-
     vector<int> available;
     for (int neighborId : neighbors)
     {
         if (!grid.vertexExists(neighborId))
         {
-            // printf("BŁĄD: Sąsiad %d nie istnieje!\n", neighborId);
             continue;
         }
 
         if (!grid.isVertexBusy(neighborId))
         {
             available.push_back(neighborId);
-            // printf("Vertex %d jest dostępny\n", neighborId);
-        }
-        else
-        {
-            // printf("Vertex %d jest zajęty\n", neighborId);
         }
     }
-
-    // printf("Dostępni sąsiedzi: ");
-    // for (int a : available)
-    //     printf("%d ", a);
-    // printf("\n");
 
     return available;
 }
@@ -268,16 +216,9 @@ bool Simulation::areAgentsNeighbors(Agent &agent1, Agent &agent2)
     int agent1Vertex = agent1.getCurrentPointId();
     int agent2Vertex = agent2.getCurrentPointId();
 
-    // Sprawdź czy agent2 jest sąsiadem agent1
     Vertex &v1 = grid.getVertex(agent1Vertex);
     vector<int> neighbors1 = v1.getNeighbors();
     bool isNeighbor = find(neighbors1.begin(), neighbors1.end(), agent2Vertex) != neighbors1.end();
-
-    if (isNeighbor)
-    {
-        printf("Agent %d (vertex %d) i Agent %d (vertex %d) są sąsiadami\n",
-               agent1.getId(), agent1Vertex, agent2.getId(), agent2Vertex);
-    }
 
     return isNeighbor;
 }
@@ -289,8 +230,6 @@ void Simulation::exchangeVisitedBetweenNeighbors()
         return;
     }
 
-    printf("=== WYMIANA VISITED ===\n");
-
     for (int i = 0; i < getAgentSize(); i++)
     {
         for (int j = i + 1; j < getAgentSize(); j++)
@@ -300,27 +239,11 @@ void Simulation::exchangeVisitedBetweenNeighbors()
 
             if (areAgentsNeighbors(agent1, agent2))
             {
-                printf("Agent %d i Agent %d są sąsiadami - wymieniamy visited!\n",
-                       agent1.getId(), agent2.getId());
-
-                // Wymień visited
                 agent1.exchangeVisited(agent2);
                 exchangeCounter++;
-
-                // DEBUG: pokaż wyniki wymiany
-                printf("Po wymianie - Agent %d visited: ", agent1.getId());
-                for (int v : agent1.getVisited())
-                    printf("%d ", v);
-                printf("\n");
-
-                printf("Po wymianie - Agent %d visited: ", agent2.getId());
-                for (int v : agent2.getVisited())
-                    printf("%d ", v);
-                printf("\n");
             }
         }
     }
-    printf("===== =====\n");
 }
 
 int Simulation::getIteration()

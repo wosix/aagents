@@ -144,11 +144,6 @@ void Grid::draw(set<int> visited)
     for (const auto &[id, point] : points)
     {
         Color color = Color(BLACK);
-        // if (isVisited(visited, id))
-        // {
-        //     color = Color(RAYWHITE);
-        // }
-
         DrawCircle(point.getX(), point.getY(), 20, color);
 
         // draw vertex id
