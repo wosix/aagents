@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
@@ -34,6 +35,7 @@ public:
     bool isVertexBusyByOtherAgent(int vertexId, int agentId);
     Vertex &getVertex(int vertexId);
     bool vertexExists(int vertexId) const;
+    double getDistance(int id1, int id2);
 
     void draw(set<int> visited);
 };
@@ -125,6 +127,18 @@ bool Grid::vertexExists(int vertexId) const
 {
     return points.find(vertexId) != points.end();
 }
+
+double Grid::getDistance(int id1, int id2)
+{
+    Vertex &v1 = getVertex(id1);
+    Vertex &v2 = getVertex(id2);
+
+    double dx = v1.getX() - v2.getX();
+    double dy = v1.getY() - v2.getY();
+
+    return sqrt(dx * dx + dy * dy);
+}
+
 void Grid::draw(set<int> visited)
 {
     for (const auto &[id, point] : points)
