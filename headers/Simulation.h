@@ -44,7 +44,7 @@ public:
     virtual string getName() = 0;
     void saveSimulationToFile();
 
-    void reset();
+    virtual void reset();
     void draw();
 };
 
