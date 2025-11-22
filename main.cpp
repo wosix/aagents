@@ -5,6 +5,7 @@
 #include "SimulationRandom.h"
 #include "SimulationUnvisited.h"
 #include "SimulationFrontier.h"
+#include "SimulationSpanningTree.h"
 
 #define SCREEN_WIDTH 1200
 #define SCREEN_HEIGHT 800
@@ -27,12 +28,17 @@ int main()
     // SimulationUnvisited simulation = SimulationUnvisited(grid, 1);
     // SimulationUnvisited simulation = SimulationUnvisited(grid, 2);
     // SimulationUnvisited simulation = SimulationUnvisited(grid, 4);
-    SimulationUnvisited simulation = SimulationUnvisited(grid, 8);
+    // SimulationUnvisited simulation = SimulationUnvisited(grid, 8);
 
     // SimulationFrontier simulation = SimulationFrontier(grid, 1);
     // SimulationFrontier simulation = SimulationFrontier(grid, 2);
     // SimulationFrontier simulation = SimulationFrontier(grid, 4);
     // SimulationFrontier simulation = SimulationFrontier(grid, 8);
+
+    // SimulationSpanningTree simulation = SimulationSpanningTree(grid, 1);
+    // SimulationSpanningTree simulation = SimulationSpanningTree(grid, 2);
+    // SimulationSpanningTree simulation = SimulationSpanningTree(grid, 4);
+    SimulationSpanningTree simulation = SimulationSpanningTree(grid, 8);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
     SetTargetFPS(60);
