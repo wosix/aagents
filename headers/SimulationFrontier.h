@@ -16,6 +16,7 @@ public:
     string getName() override;
     void planMove(Agent &agent) override;
     void exchangeVisitedBetweenNeighbors() override;
+    void reset() override;
 
 private:
     void exchangeFrontiers(Agent &agent1, Agent &agent2);
@@ -23,9 +24,9 @@ private:
     void addFrontier(int agentId, int vertexId);
     void removeFrontier(int agentId, int vertexId);
     deque<int> findPathToNearestFrontier(int agentId, int startVertexId);
-    double getEdgeCost(int fromVertexId, int toVertexId);
     deque<int> reconstructPath(const unordered_map<int, int> &predecessors,
                                int startId, int targetId);
+    void resetAgentFrontires();
 };
 
 string SimulationFrontier::getName()
@@ -86,12 +87,10 @@ void SimulationFrontier::exchangeVisitedBetweenNeighbors()
                 printf("Agent %d i Agent %d są sąsiadami - wymieniamy visited!\n",
                        agent1.getId(), agent2.getId());
 
-                // Wymień visited
                 agent1.exchangeVisited(agent2);
                 exchangeFrontiers(agent1, agent2);
                 exchangeCounter++;
 
-                // DEBUG: pokaż wyniki wymiany
                 printf("Po wymianie - Agent %d visited: ", agent1.getId());
                 for (int v : agent1.getVisited())
                     printf("%d ", v);
@@ -198,7 +197,7 @@ deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startV
             if (treated.count(neighborId))
                 continue;
 
-            double edgeCost = getEdgeCost(currentVertex, neighborId);
+            double edgeCost = grid.getDistance(currentVertex, neighborId);
             double newCost = currentCost + edgeCost;
 
             if (newCost < distances[neighborId])
@@ -210,7 +209,6 @@ deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startV
         }
     }
 
-    // Rekonstrukcja ścieżki jeśli znaleziono frontier
     if (bestFrontier != -1)
     {
         return reconstructPath(predecessors, startVertexId, bestFrontier);
@@ -219,36 +217,22 @@ deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startV
     return {};
 }
 
-double SimulationFrontier::getEdgeCost(int fromVertexId, int toVertexId)
-{
-    // Możesz dostosować koszty w zależności od typu terenu
-    // Na razie zakładamy koszt = 1 dla wszystkich krawędzi
-    return 1.0;
-}
-
 deque<int> SimulationFrontier::reconstructPath(const unordered_map<int, int> &predecessors,
                                                int startId, int targetId)
 {
     deque<int> path;
-    // Startujemy od celu i idziemy wstecz do startu
     int current = targetId;
 
     while (current != startId)
     {
-        path.push_front(current); // Dodaj na początek - O(1)
-        // Znajdź poprzednika
+        path.push_front(current);
         auto it = predecessors.find(current);
         if (it == predecessors.end())
         {
-            // Nie znaleziono poprzednika - błąd w ścieżce
             return {};
         }
-        current = it->second; // Przejdź do poprzednika
+        current = it->second;
     }
-
-    // Na końcu dodaj wierzchołek startowy
-    // path.push_front(startId);
-
     return path;
 }
 
@@ -261,16 +245,34 @@ void SimulationFrontier::exchangeFrontiers(Agent &agent1, Agent &agent2)
     vector<int> visited1 = agent1.getVisited();
     vector<int> visited2 = agent2.getVisited();
 
-    // vector<int> mergedVisited = copy(visited2.begin(), visited2.end(), back_inserter(visited1));
-
     unordered_set<int> mergedSet(visited1.begin(), visited1.end());
     mergedSet.insert(visited2.begin(), visited2.end());
 
-    for (int visited : mergedSet)
+    for (int visitedId : mergedSet)
     {
-        frontiers.erase(visited);
+        frontiers.erase(visitedId);
     }
 
     agentFrontiers[agent1.getId()] = frontiers;
     agentFrontiers[agent2.getId()] = frontiers;
+}
+
+void SimulationFrontier::reset()
+{
+    grid.freeAllVertex();
+    for (int i = 0; i < agents.size(); i++)
+    {
+        agents[i].reset();
+    }
+    addIteration();
+    resetExchangeCounter();
+    resetAgentFrontires();
+}
+
+void SimulationFrontier::resetAgentFrontires()
+{
+    for (int i = 0; i < getAgentSize(); i++)
+    {
+        agentFrontiers[i] = {};
+    }
 }
