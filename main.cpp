@@ -7,7 +7,7 @@
 #include "SimulationFrontier.h"
 #include "SimulationSpanningTree.h"
 
-#define SCREEN_WIDTH 1200
+#define SCREEN_WIDTH 900
 #define SCREEN_HEIGHT 800
 #define WINDOW_TITLE "autonomus agents"
 
@@ -17,8 +17,9 @@ int main()
 {
     SetRandomSeed((unsigned int)time(NULL));
     Grid grid = Grid();
-    grid = makeGrid(grid);
+    // grid = makeGrid(grid);
     // grid = makeTestGrid(grid);
+    grid = makeGraph(grid);
 
     // SimulationRandom simulation = SimulationRandom(grid, 1);
     // SimulationRandom simulation = SimulationRandom(grid, 2);
@@ -37,8 +38,8 @@ int main()
 
     // SimulationSpanningTree simulation = SimulationSpanningTree(grid, 1);
     // SimulationSpanningTree simulation = SimulationSpanningTree(grid, 2);
-    // SimulationSpanningTree simulation = SimulationSpanningTree(grid, 4);
-    SimulationSpanningTree simulation = SimulationSpanningTree(grid, 8);
+    SimulationSpanningTree simulation = SimulationSpanningTree(grid, 4);
+    // SimulationSpanningTree simulation = SimulationSpanningTree(grid, 8);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
     SetTargetFPS(60);

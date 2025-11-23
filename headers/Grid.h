@@ -363,6 +363,209 @@ Grid makeTestGrid(Grid grid)
     return grid;
 }
 
+Grid makeGraph(Grid grid)
+{
+    grid.addPoint(210, 153);
+    grid.addPoint(526, 78);
+    grid.addPoint(124, 122);
+    grid.addPoint(255, 243);
+    grid.addPoint(166, 420);
+    grid.addPoint(603, 736);
+    grid.addPoint(529, 650);
+    grid.addPoint(664, 649);
+    grid.addPoint(528, 552);
+    grid.addPoint(589, 676);
+    grid.addPoint(746, 702);
+    grid.addPoint(549, 517);
+    grid.addPoint(673, 587);
+    grid.addPoint(661, 352);
+    grid.addPoint(741, 431);
+    grid.addPoint(426, 142);
+    grid.addPoint(415, 543);
+    grid.addPoint(355, 697);
+    grid.addPoint(498, 719);
+    grid.addPoint(444, 750);
+    grid.addPoint(411, 613);
+    grid.addPoint(328, 611);
+    grid.addPoint(411, 716);
+    grid.addPoint(282, 749);
+    grid.addPoint(649, 137);
+    grid.addPoint(403, 82);
+    grid.addPoint(722, 538);
+    grid.addPoint(556, 398);
+    grid.addPoint(790, 541);
+    grid.addPoint(659, 475);
+    grid.addPoint(187, 653);
+    grid.addPoint(638, 62);
+    grid.addPoint(119, 501);
+    grid.addPoint(122, 570);
+    grid.addPoint(238, 547);
+    grid.addPoint(568, 118);
+    grid.addPoint(705, 102);
+    grid.addPoint(107, 721);
+    grid.addPoint(261, 679);
+    grid.addPoint(572, 353);
+    grid.addPoint(789, 480);
+    grid.addPoint(792, 314);
+    grid.addPoint(529, 248);
+    grid.addPoint(302, 501);
+    grid.addPoint(50, 570);
+    grid.addPoint(357, 180);
+    grid.addPoint(728, 333);
+    grid.addPoint(307, 370);
+    grid.addPoint(126, 366);
+    grid.addPoint(288, 139);
+    grid.addPoint(365, 306);
+    grid.addPoint(544, 211);
+    grid.addPoint(749, 288);
+    grid.addPoint(51, 380);
+    grid.addPoint(283, 422);
+    grid.addPoint(197, 322);
+    grid.addPoint(367, 53);
+    grid.addPoint(673, 216);
+    grid.addPoint(776, 146);
+    grid.addPoint(472, 50);
+    grid.addPoint(255, 302);
+    grid.addPoint(67, 191);
+    grid.addPoint(404, 291);
+    grid.addPoint(248, 77);
+
+    grid.connectPoints(0, 1);
+    grid.connectPoints(0, 2);
+    grid.connectPoints(0, 3);
+
+    grid.connectPoints(1, 58);
+    grid.connectPoints(1, 59);
+
+    grid.connectPoints(2, 61);
+    grid.connectPoints(2, 63);
+
+    grid.connectPoints(3, 60);
+    grid.connectPoints(3, 62);
+
+    grid.connectPoints(4, 32);
+    grid.connectPoints(4, 47);
+    grid.connectPoints(4, 48);
+
+    grid.connectPoints(5, 9);
+    grid.connectPoints(5, 10);
+    grid.connectPoints(5, 11);
+
+    grid.connectPoints(6, 9);
+    grid.connectPoints(6, 11);
+    grid.connectPoints(6, 17);
+
+    grid.connectPoints(7, 10);
+    grid.connectPoints(7, 12);
+    grid.connectPoints(7, 18);
+
+    grid.connectPoints(8, 11);
+    grid.connectPoints(8, 12);
+    grid.connectPoints(8, 16);
+
+    grid.connectPoints(9, 29);
+
+    grid.connectPoints(10, 28);
+
+    grid.connectPoints(11, 27);
+
+    grid.connectPoints(12, 26);
+
+    grid.connectPoints(13, 26);
+    grid.connectPoints(13, 27);
+    grid.connectPoints(13, 31);
+
+    grid.connectPoints(14, 28);
+    grid.connectPoints(14, 29);
+    grid.connectPoints(14, 46);
+
+    grid.connectPoints(15, 24);
+    grid.connectPoints(15, 25);
+    grid.connectPoints(15, 45);
+
+    grid.connectPoints(16, 20);
+    grid.connectPoints(16, 21);
+
+    grid.connectPoints(17, 21);
+    grid.connectPoints(17, 23);
+
+    grid.connectPoints(18, 20);
+    grid.connectPoints(18, 22);
+
+    grid.connectPoints(19, 22);
+    grid.connectPoints(19, 23);
+
+    grid.connectPoints(20, 34);
+
+    grid.connectPoints(21, 33);
+
+    grid.connectPoints(22, 38);
+
+    grid.connectPoints(23, 37);
+
+    grid.connectPoints(24, 36);
+    grid.connectPoints(24, 57);
+
+    grid.connectPoints(25, 35);
+    grid.connectPoints(25, 56);
+
+    grid.connectPoints(26, 40);
+
+    grid.connectPoints(27, 39);
+
+    grid.connectPoints(28, 40);
+
+    grid.connectPoints(29, 39);
+
+    grid.connectPoints(30, 37);
+    grid.connectPoints(30, 38);
+    grid.connectPoints(30, 55);
+
+    grid.connectPoints(31, 35);
+    grid.connectPoints(31, 36);
+
+    grid.connectPoints(32, 33);
+    grid.connectPoints(32, 34);
+
+    grid.connectPoints(33, 44);
+
+    grid.connectPoints(34, 43);
+    grid.connectPoints(35, 42);
+
+    grid.connectPoints(36, 41);
+    grid.connectPoints(37, 44);
+    grid.connectPoints(38, 43);
+    grid.connectPoints(39, 41);
+    grid.connectPoints(40, 41);
+    grid.connectPoints(41, 52);
+    grid.connectPoints(42, 51);
+    grid.connectPoints(43, 54);
+    grid.connectPoints(44, 53);
+    grid.connectPoints(45, 49);
+    grid.connectPoints(45, 50);
+    grid.connectPoints(46, 51);
+    grid.connectPoints(46, 52);
+    grid.connectPoints(47, 50);
+    grid.connectPoints(47, 54);
+    grid.connectPoints(48, 49);
+    grid.connectPoints(48, 53);
+    grid.connectPoints(49, 63);
+    grid.connectPoints(50, 62);
+
+    grid.connectPoints(51, 59);
+    grid.connectPoints(52, 58);
+    grid.connectPoints(53, 61);
+    grid.connectPoints(54, 60);
+    grid.connectPoints(55, 60);
+    grid.connectPoints(55, 61);
+    grid.connectPoints(56, 59);
+    grid.connectPoints(56, 63);
+    grid.connectPoints(57, 58);
+    grid.connectPoints(57, 62);
+
+    return grid;
+}
+
 // algoorytm gnp
 
 // erdos-renyi
