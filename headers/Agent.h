@@ -47,6 +47,7 @@ public:
     bool hasVisitedAllPoints(vector<int> ids);
     vector<int> findUnvisited(vector<int> neighbors);
     int getPathLength();
+    int addPath(int);
 
     int getTargetId();
     void setTargetId(int pointId);
@@ -238,15 +239,24 @@ bool Agent::move(int targetX, int targetY)
 {
     int speed = AGENT_MOVE_SPEED;
 
-    if (x < targetX)
-        x = min(x + speed, targetX);
-    else if (x > targetX)
-        x = max(x - speed, targetX);
+    float dx = targetX - x;
+    float dy = targetY - y;
 
-    if (y < targetY)
-        y = min(y + speed, targetY);
-    else if (y > targetY)
-        y = max(y - speed, targetY);
+    float distance = sqrt(dx * dx + dy * dy);
+
+    if (distance <= speed)
+    {
+        x = targetX;
+        y = targetY;
+        pathLength += distance / 100.0f;
+        return true;
+    }
+
+    float moveX = (dx / distance) * speed;
+    float moveY = (dy / distance) * speed;
+
+    x += static_cast<int>(moveX);
+    y += static_cast<int>(moveY);
 
     pathLength += speed / 100.0f;
 
