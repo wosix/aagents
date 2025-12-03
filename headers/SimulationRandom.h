@@ -21,7 +21,7 @@ void SimulationRandom::planMove(Agent &agent)
     if (!agent.hasTarget() || agent.hasReachedTarget())
     {
         Vertex &current = grid.getVertex(agent.getCurrentPointId());
-        vector<int> neighbors = current.getNeighbors();
+        unordered_set<int> neighbors = current.getNeighbors();
 
         vector<int> available;
         for (int neighborId : neighbors)

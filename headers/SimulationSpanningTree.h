@@ -173,7 +173,7 @@ bool SimulationSpanningTree::isVertexInEdges(int agentId, int vertexId)
     return agMem.edges.find(vertexId) != agMem.edges.end();
 }
 
-deque<int> SimulationSpanningTree::findPathToNearestUnvisited(int agentId, int vertexId)
+deque<int> SimulationSpanningTree::findPathToNearestUnvisited(int agentId, int startVertexId)
 {
     auto &memory = agentsKnolage[agentId];
     auto allTreeVertices = getAllTreeVertices(agentId);
@@ -191,7 +191,7 @@ deque<int> SimulationSpanningTree::findPathToNearestUnvisited(int agentId, int v
     {
         distances[i] = numeric_limits<double>::max();
     }
-    distances[vertexId] = 0.0;
+    distances[startVertexId] = 0.0;
 
     struct CompareCost
     {
@@ -201,10 +201,12 @@ deque<int> SimulationSpanningTree::findPathToNearestUnvisited(int agentId, int v
         }
     };
 
-    priority_queue<pair<double, int>, vector<pair<double, int>>, CompareCost> pq(CompareCost{});
-    pq.push({0.0, vertexId});
+    using QueueElement = pair<double, int>;
+    priority_queue<QueueElement, vector<QueueElement>, CompareCost> pq(CompareCost{});
+    pq.push({0.0, startVertexId});
 
-    int nearestEdge = -1;
+    int bestEdge = -1;
+    double bestCost = numeric_limits<double>::max();
 
     while (!pq.empty())
     {
@@ -215,10 +217,13 @@ deque<int> SimulationSpanningTree::findPathToNearestUnvisited(int agentId, int v
             continue;
         visited.insert(currentVertex);
 
-        if (memory.edges.count(currentVertex))
+        if (memory.edges.count(currentVertex) && !grid.isVertexBusy(currentVertex))
         {
-            nearestEdge = currentVertex;
-            break;
+            if (currentCost < bestCost)
+            {
+                bestEdge = currentVertex;
+                bestCost = currentCost;
+            }
         }
 
         if (allTreeVertices.count(currentVertex))
@@ -244,9 +249,9 @@ deque<int> SimulationSpanningTree::findPathToNearestUnvisited(int agentId, int v
         }
     }
 
-    if (nearestEdge != -1)
+    if (bestEdge != -1)
     {
-        return reconstructPath(predecessors, vertexId, nearestEdge);
+        return reconstructPath(predecessors, startVertexId, bestEdge);
     }
 
     return {};

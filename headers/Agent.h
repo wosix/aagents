@@ -9,7 +9,7 @@
 #include "Vertex.h"
 #include "ColorManager.h"
 
-#define AGENT_MOVE_SPEED 3
+#define AGENT_MOVE_SPEED 10
 
 class Agent
 {
@@ -20,7 +20,7 @@ private:
     int currentPointId;
     int x;
     int y;
-    vector<int> visited;
+    unordered_set<int> visited;
     float pathLength;
     int targetId;
     bool reachedTarget = true;
@@ -40,12 +40,12 @@ public:
 
     void setLocation(int x, int y);
 
-    vector<int> getVisited();
+    unordered_set<int> getVisited();
     void addVisited(int pointId);
     bool hasVisitedVertex(int vertexId);
     bool hasVisitedAllNeighbors();
-    bool hasVisitedAllPoints(vector<int> ids);
-    vector<int> findUnvisited(vector<int> neighbors);
+    bool hasVisitedAllPoints(unordered_set<int> ids);
+    unordered_set<int> findUnvisited(unordered_set<int> neighbors);
     int getPathLength();
     int addPath(int);
 
@@ -66,8 +66,8 @@ public:
     ~Agent();
 
 private:
-    vector<int> mergeVisited(const vector<int> &base, const vector<int> &toAdd);
-    void setVisited(vector<int> visited);
+    unordered_set<int> mergeVisited(const unordered_set<int> &base, const unordered_set<int> &toAdd);
+    void setVisited(unordered_set<int> visited);
     void setVisitedColor(Color color);
     Color getVisitedColor();
 };
@@ -115,27 +115,24 @@ void Agent::setLocation(int x, int y)
     setY(y);
 }
 
-vector<int> Agent::getVisited() { return visited; }
+unordered_set<int> Agent::getVisited() { return visited; }
 
 void Agent::addVisited(int pointId)
 {
-    if (find(visited.begin(), visited.end(), pointId) == visited.end())
-    {
-        visited.push_back(pointId);
-    }
+    visited.insert(pointId);
 }
 
 bool Agent::hasVisitedVertex(int vertexId)
 {
-    return find(visited.begin(), visited.end(), vertexId) != visited.end();
+    return visited.find(vertexId) != visited.end();
 }
 
 bool Agent::hasVisitedAllNeighbors()
 {
-    vector<int> neighbors = grid.getVertex(currentPointId).getNeighbors();
+    unordered_set<int> neighbors = grid.getVertex(currentPointId).getNeighbors();
     for (int neighborId : neighbors)
     {
-        if (find(visited.begin(), visited.end(), neighborId) == visited.end())
+        if (visited.find(neighborId) == visited.end())
         {
             return false;
         }
@@ -143,11 +140,11 @@ bool Agent::hasVisitedAllNeighbors()
     return true;
 }
 
-bool Agent::hasVisitedAllPoints(vector<int> pointsIds)
+bool Agent::hasVisitedAllPoints(unordered_set<int> pointsIds)
 {
     for (int id : pointsIds)
     {
-        if (find(visited.begin(), visited.end(), id) == visited.end())
+        if (visited.find(id) != visited.end())
         {
             return false;
         }
@@ -155,14 +152,14 @@ bool Agent::hasVisitedAllPoints(vector<int> pointsIds)
     return true;
 }
 
-vector<int> Agent::findUnvisited(vector<int> neighbors)
+unordered_set<int> Agent::findUnvisited(unordered_set<int> neighbors)
 {
-    vector<int> unvisited = {};
+    unordered_set<int> unvisited = {};
     for (int neighborId : neighbors)
     {
-        if (find(visited.begin(), visited.end(), neighborId) == visited.end())
+        if (visited.find(neighborId) == visited.end())
         {
-            unvisited.push_back(neighborId);
+            unvisited.insert(neighborId);
         }
     }
     return unvisited;
@@ -182,28 +179,22 @@ void Agent::setVisitedColor(Color color) { visitedColor = color; }
 
 Color Agent::getVisitedColor() { return visitedColor; }
 
-vector<int> Agent::mergeVisited(const vector<int> &base, const vector<int> &toAdd)
+unordered_set<int> Agent::mergeVisited(const unordered_set<int> &base, const unordered_set<int> &toAdd)
 {
-    vector<int> result = base;
-    for (int pointId : toAdd)
-    {
-        if (find(result.begin(), result.end(), pointId) == result.end())
-        {
-            result.push_back(pointId);
-        }
-    }
+    unordered_set<int> result = base;
+    result.insert(toAdd.begin(), toAdd.end());
     return result;
 }
 
-void Agent::setVisited(vector<int> newVisited) { visited = newVisited; }
+void Agent::setVisited(unordered_set<int> newVisited) { visited = newVisited; }
 
 void Agent::exchangeVisited(Agent &otherAgent)
 {
-    vector<int> myVisited = getVisited();
-    vector<int> otherVisited = otherAgent.getVisited();
+    unordered_set<int> myVisited = getVisited();
+    unordered_set<int> otherVisited = otherAgent.getVisited();
 
-    vector<int> mergedVisited = mergeVisited(myVisited, otherVisited);
-    vector<int> otherMergedVisited = mergeVisited(otherVisited, myVisited);
+    unordered_set<int> mergedVisited = mergeVisited(myVisited, otherVisited);
+    unordered_set<int> otherMergedVisited = mergeVisited(otherVisited, myVisited);
 
     setVisited(mergedVisited);
     otherAgent.setVisited(otherMergedVisited);
@@ -226,6 +217,8 @@ bool Agent::moveToTarget()
 
     if (reached)
     {
+        double distanceTraveled = grid.getDistance(currentPointId, targetId);
+        pathLength += distanceTraveled;
         grid.freeVertex(currentPointId);
         grid.reserveVertex(targetId, id);
         setCurrentPointId(targetId);
@@ -248,7 +241,7 @@ bool Agent::move(int targetX, int targetY)
     {
         x = targetX;
         y = targetY;
-        pathLength += distance / 100.0f;
+        // pathLength += distance / 100.0f;
         return true;
     }
 
@@ -258,7 +251,7 @@ bool Agent::move(int targetX, int targetY)
     x += static_cast<int>(moveX);
     y += static_cast<int>(moveY);
 
-    pathLength += speed / 100.0f;
+    // pathLength += speed / 100.0f;
 
     return (x == targetX && y == targetY);
 }

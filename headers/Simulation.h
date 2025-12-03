@@ -26,9 +26,9 @@ public:
     bool everyAgentHasReachedTarget();
 
     Vertex &getPoint(int pointId);
-    vector<int> getGridPointsIds();
-    set<int> getVisitedTogether();
-    vector<int> getAvailablePointIds(int pointId);
+    unordered_set<int> getGridPointsIds();
+    unordered_set<int> getVisitedTogether();
+    unordered_set<int> getAvailablePointIds(int pointId);
 
     int getAgentSize();
     vector<Agent> getAgents();
@@ -92,13 +92,9 @@ void Simulation::update()
         return;
     }
 
-    // FAZA 1 - WYMIANA
     exchangeVisitedBetweenNeighbors();
 
-    // FAZA 2 - PLANOWANIE
-    bool allReached = everyAgentHasReachedTarget();
-
-    if (allReached)
+    if (everyAgentHasReachedTarget())
     {
         for (int i = 0; i < getAgentSize(); i++)
         {
@@ -106,12 +102,13 @@ void Simulation::update()
             planMove(agent);
         }
     }
-
-    // FAZA 3 - RUCH
-    for (int i = 0; i < getAgentSize(); i++)
+    else
     {
-        Agent &agent = getAgent(i);
-        makeMove(agent);
+        for (int i = 0; i < getAgentSize(); i++)
+        {
+            Agent &agent = getAgent(i);
+            makeMove(agent);
+        }
     }
 }
 
@@ -125,10 +122,10 @@ void Simulation::makeMove(Agent &agent)
 
 bool Simulation::hasAgentsVisitedAllPoints()
 {
-    set<int> visitedTogether = getVisitedTogether();
+    unordered_set<int> visitedTogether = getVisitedTogether();
     for (int pointId : getGridPointsIds())
     {
-        if (find(visitedTogether.begin(), visitedTogether.end(), pointId) == visitedTogether.end())
+        if (visitedTogether.find(pointId) == visitedTogether.end())
         {
             return false;
         }
@@ -157,14 +154,14 @@ Vertex &Simulation::getPoint(int pointId)
     return grid.getVertex(pointId);
 }
 
-vector<int> Simulation::getGridPointsIds()
+unordered_set<int> Simulation::getGridPointsIds()
 {
     return grid.getPointIds();
 }
 
-set<int> Simulation::getVisitedTogether()
+unordered_set<int> Simulation::getVisitedTogether()
 {
-    set<int> visitedTogether = {};
+    unordered_set<int> visitedTogether = {};
     for (Agent agent : agents)
     {
         for (int visitedId : agent.getVisited())
@@ -175,7 +172,7 @@ set<int> Simulation::getVisitedTogether()
     return visitedTogether;
 }
 
-vector<int> Simulation::getAvailablePointIds(int pointId)
+unordered_set<int> Simulation::getAvailablePointIds(int pointId)
 {
     if (!grid.vertexExists(pointId))
     {
@@ -183,9 +180,9 @@ vector<int> Simulation::getAvailablePointIds(int pointId)
     }
 
     Vertex currentVertex = grid.getVertex(pointId);
-    vector<int> neighbors = currentVertex.getNeighbors();
+    unordered_set<int> neighbors = currentVertex.getNeighbors();
 
-    vector<int> available;
+    unordered_set<int> available;
     for (int neighborId : neighbors)
     {
         if (!grid.vertexExists(neighborId))
@@ -195,7 +192,7 @@ vector<int> Simulation::getAvailablePointIds(int pointId)
 
         if (!grid.isVertexBusy(neighborId))
         {
-            available.push_back(neighborId);
+            available.insert(neighborId);
         }
     }
 
@@ -217,8 +214,8 @@ bool Simulation::areAgentsNeighbors(Agent &agent1, Agent &agent2)
     int agent2Vertex = agent2.getCurrentPointId();
 
     Vertex &v1 = grid.getVertex(agent1Vertex);
-    vector<int> neighbors1 = v1.getNeighbors();
-    bool isNeighbor = find(neighbors1.begin(), neighbors1.end(), agent2Vertex) != neighbors1.end();
+    unordered_set<int> neighbors1 = v1.getNeighbors();
+    bool isNeighbor = neighbors1.find(agent2Vertex) != neighbors1.end();
 
     return isNeighbor;
 }

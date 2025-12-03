@@ -10,19 +10,19 @@ private:
     int id;
     int x;
     int y;
-    vector<int> neighbors;
+    unordered_set<int> neighbors;
     int busyByAgentId = -1;
 
 public:
     Vertex();
-    Vertex(int id, int a, int b, vector<int> neighborIds);
+    Vertex(int id, int a, int b, unordered_set<int> neighborIds);
     void setX(int val);
     void setY(int val);
     int getId() const;
     int getX() const;
     int getY() const;
     void addNeighbor(int vertexId);
-    vector<int> getNeighbors() const;
+    unordered_set<int> getNeighbors() const;
     int getBusyByAgentId();
     void setBusyByAgentId(int agentId);
     bool isBusy();
@@ -31,7 +31,7 @@ public:
 
 Vertex::Vertex() {}
 
-Vertex::Vertex(int pointId, int a, int b, vector<int> neighborIds) : id(pointId), x(a), y(b), neighbors(neighborIds) {}
+Vertex::Vertex(int pointId, int a, int b, unordered_set<int> neighborIds) : id(pointId), x(a), y(b), neighbors(neighborIds) {}
 
 void Vertex::setX(int val)
 {
@@ -60,10 +60,10 @@ int Vertex::getY() const
 
 void Vertex::addNeighbor(int vertexId)
 {
-    neighbors.push_back(vertexId);
+    neighbors.insert(vertexId);
 }
 
-vector<int> Vertex::getNeighbors() const
+unordered_set<int> Vertex::getNeighbors() const
 {
     return neighbors;
 }

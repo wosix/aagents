@@ -21,7 +21,7 @@ void SimulationUnvisited::planMove(Agent &agent)
     if (!agent.hasTarget() || agent.hasReachedTarget())
     {
         Vertex &current = grid.getVertex(agent.getCurrentPointId());
-        vector<int> neighbors = current.getNeighbors();
+        unordered_set<int> neighbors = current.getNeighbors();
 
         vector<int> available;
         for (int neighborId : neighbors)
@@ -32,7 +32,9 @@ void SimulationUnvisited::planMove(Agent &agent)
             }
         }
 
-        vector<int> unvisited = agent.findUnvisited(available);
+        unordered_set<int> availableSet(available.begin(), available.end());
+        unordered_set<int> unvisitedSet = agent.findUnvisited(availableSet);
+        vector<int> unvisited(unvisitedSet.begin(), unvisitedSet.end());
 
         if (!unvisited.empty())
         {

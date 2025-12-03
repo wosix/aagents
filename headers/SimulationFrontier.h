@@ -123,6 +123,8 @@ void SimulationFrontier::removeFrontier(int agentId, int vertexId)
 deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startVertexId)
 {
     auto &frontiers = agentFrontiers[agentId];
+    auto allVisitedByAgent = getAgent(agentId).getVisited();
+
     if (frontiers.empty())
     {
         return {};
@@ -164,8 +166,7 @@ deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startV
         // Pomijamy jeśli już przetworzony
         if (treated.count(currentVertex))
             continue;
-        else
-            treated.insert(currentVertex);
+        treated.insert(currentVertex);
 
         // Sprawdzamy czy to frontier (i nie jest zajęty)
         if (frontiers.count(currentVertex) && !grid.isVertexBusy(currentVertex))
@@ -177,21 +178,27 @@ deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startV
             }
         }
 
-        // Przetwarzamy sąsiadów
-        Vertex &vertex = grid.getVertex(currentVertex);
-        for (int neighborId : vertex.getNeighbors())
+        if (allVisitedByAgent.count(currentVertex))
         {
-            if (treated.count(neighborId))
-                continue;
-
-            double edgeCost = grid.getDistance(currentVertex, neighborId);
-            double newCost = currentCost + edgeCost;
-
-            if (newCost < distances[neighborId])
+            // Przetwarzamy sąsiadów
+            Vertex &vertex = grid.getVertex(currentVertex);
+            for (int neighborId : vertex.getNeighbors())
             {
-                distances[neighborId] = newCost;
-                predecessors[neighborId] = currentVertex;
-                pq.push({newCost, neighborId});
+                if (treated.count(neighborId))
+                    continue;
+
+                if (allVisitedByAgent.count(currentVertex))
+                {
+                    double edgeCost = grid.getDistance(currentVertex, neighborId);
+                    double newCost = currentCost + edgeCost;
+
+                    if (newCost < distances[neighborId])
+                    {
+                        distances[neighborId] = newCost;
+                        predecessors[neighborId] = currentVertex;
+                        pq.push({newCost, neighborId});
+                    }
+                }
             }
         }
     }
@@ -229,13 +236,15 @@ void SimulationFrontier::exchangeFrontiers(Agent &agent1, Agent &agent2)
     auto &neigborFrontiers = agentFrontiers[agent2.getId()];
     frontiers.merge(neigborFrontiers);
 
-    vector<int> visited1 = agent1.getVisited();
-    vector<int> visited2 = agent2.getVisited();
+    unordered_set<int> visited1 = agent1.getVisited();
+    unordered_set<int> visited2 = agent2.getVisited();
 
-    unordered_set<int> mergedSet(visited1.begin(), visited1.end());
-    mergedSet.insert(visited2.begin(), visited2.end());
+    visited1.merge(visited2);
 
-    for (int visitedId : mergedSet)
+    // unordered_set<int> mergedSet = visited1;
+    // mergedSet.insert(visited2.begin(), visited2.end());
+
+    for (int visitedId : visited1)
     {
         frontiers.erase(visitedId);
     }
