@@ -130,12 +130,10 @@ deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startV
         return {};
     }
 
-    // Struktury danych dla Dijkstry
     unordered_map<int, double> distances;
     unordered_map<int, int> predecessors;
     unordered_set<int> treated;
 
-    // Inicjalizacja odległości
     for (int i = 0; i < grid.getSize(); i++)
     {
         distances[i] = numeric_limits<double>::max();
@@ -150,7 +148,6 @@ deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startV
         }
     };
 
-    // Kolejka priorytetowa: (koszt, vertexId)
     using QueueElement = pair<double, int>;
     priority_queue<QueueElement, vector<QueueElement>, CompareCost> pq(CompareCost{});
     pq.push({0.0, startVertexId});
@@ -163,12 +160,10 @@ deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startV
         auto [currentCost, currentVertex] = pq.top();
         pq.pop();
 
-        // Pomijamy jeśli już przetworzony
         if (treated.count(currentVertex))
             continue;
         treated.insert(currentVertex);
 
-        // Sprawdzamy czy to frontier (i nie jest zajęty)
         if (frontiers.count(currentVertex) && !grid.isVertexBusy(currentVertex))
         {
             if (currentCost < bestCost)
@@ -180,7 +175,6 @@ deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startV
 
         if (allVisitedByAgent.count(currentVertex))
         {
-            // Przetwarzamy sąsiadów
             Vertex &vertex = grid.getVertex(currentVertex);
             for (int neighborId : vertex.getNeighbors())
             {
@@ -191,7 +185,6 @@ deque<int> SimulationFrontier::findPathToNearestFrontier(int agentId, int startV
                 {
                     double edgeCost = grid.getDistance(currentVertex, neighborId);
                     double newCost = currentCost + edgeCost;
-
                     if (newCost < distances[neighborId])
                     {
                         distances[neighborId] = newCost;
